@@ -1,0 +1,80 @@
+
+	<!--================Login Box Area =================-->
+	<section class="login_box_area section_gap mt-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="login_box_img">
+						<img class="img-fluid" src="img/login.jpg" alt="">
+						<div class="hover">
+							<h4>Already have an account</h4>
+							<p>There are advances being made in science and technology everyday, and a good example of this is the</p>
+							<a class="primary-btn" href="/login">Login</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="login_form_inner">
+						<h3>Register to enter</h3>
+						<form class="row login_form registerForm" method="post" id="registerForm" autocomplete="off">
+							<div class="col-md-12 form-group">
+								<input type="text" class="form-control" id="name" name="name" placeholder="name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'name'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="email" class="form-control" id="email" name="email" placeholder="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'email'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="password" class="form-control" id="password" name="password" placeholder="password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'password'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="confirm password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'confirm password'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="number" class="form-control" id="phoneno" name="phoneno" placeholder="Phoneno" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phoneno'">
+							</div>
+							<p class="alert" style="color: rgb(193, 17, 17);"></p>
+							<div class="col-md-12 form-group">
+								<button type="submit" value="submit" class="primary-btn">Register</button>
+								<a href="#">Forgot Password?</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--================End Login Box Area =================-->
+
+
+	<script>
+	//axios
+    const register = async (name,email,password,confirmPassword,phoneno) => {
+    try {
+      const res = await axios({
+        method: 'POST', url: '/register', data: {name,email,password,confirmPassword,phoneno}
+      })
+	  if(res.data.status==="email"){
+		document.querySelector('.alert').textContent=res.data.message;
+	  }else if(res.data.status==="phoneno"){
+		document.querySelector('.alert').textContent=res.data.message;
+	  }else{
+		location.assign('/');
+	  }
+      
+    } catch (err) {
+	  console.log(err)
+      }
+    }
+
+
+	document.querySelector('.registerForm').addEventListener('submit', e => {
+    e.preventDefault(); 
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const phoneno = document.getElementById('phoneno').value;
+    register(name,email,password,confirmPassword,phoneno);
+    });
+
+	</script>

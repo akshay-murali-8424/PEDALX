@@ -1,0 +1,146 @@
+<form method="post" autocomplete="off" name="adminLogin" id="adminLogin" class="lform">
+  <div class="imgcontainer">
+    <h1>Admin Login</h1>
+  </div>
+
+  <div class="container">
+
+    <label for="uname"><b>Email</b></label>
+    <input type="text" placeholder="Enter email" id="email" />
+    <br />
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" id="password" />
+
+    <button type="submit">Login</button>
+    <p class="alert"></p>
+  </div>
+</form>
+
+<style>
+  /* Bordered form */
+  form {
+    border-radius: 2rem;
+    border: 3px solid rgba(255,
+        255, 255, .15);
+    margin: auto;
+    width: 33%;
+    margin-top: 10%;
+    background-color:
+      rgba(255, 255, 255, .15);
+    backdrop-filter: blur(5px);
+    color: black;
+  }
+
+  /*
+  Full-width inputs */
+  input[type=text],
+  input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  /* Set a style for all buttons */
+  button {
+    background-color: #d4af7a;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 1rem;
+  }
+
+  /* Add a
+  hover effect for buttons */
+  button:hover {
+    opacity: 0.8;
+  }
+
+  /* Extra style for
+  the cancel button (red) */
+  .cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+  }
+
+  /* Center the avatar image inside this container
+  */
+  .imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+  }
+
+  /* Avatar
+  image */
+  img.avatar {
+    width: 40%;
+    border-radius: 50%;
+  }
+
+  /* Add padding to
+  containers */
+  .container {
+    padding: 16px;
+  }
+
+  /* The "Forgot password" text */
+  span.psw {
+    float: right;
+    padding-top: 16px;
+  }
+
+  /* Change styles for span and
+  cancel button on extra small screens */
+  @media screen and (max-width: 300px) {
+    span.psw {
+      display: block;
+      float: none;
+    }
+
+    .cancelbtn {
+      width: 100%;
+    }
+  }
+
+  .welcome {
+    text-align: center;
+    color: white;
+    margin-top: 22%;
+  }
+
+  .alert {
+    color: #FD1C03;
+  }
+</style>
+<script src="/validations/adminLogin.js"></script>
+
+<script>
+  const login = async (email, password) => {
+    console.log({ email, password })
+    try {
+      const res = await axios({
+        method: 'POST', url: '/admin/login', data: { email, password }
+      })
+
+      location.assign('/admin')
+      
+    } catch (err) { 
+      document.querySelector('.alert').textContent="invalid credentials";
+      }
+  }
+
+  
+  document.querySelector('.lform').addEventListener('submit', e => {
+    e.preventDefault(); 
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    login(email, password );
+  });
+
+</script>

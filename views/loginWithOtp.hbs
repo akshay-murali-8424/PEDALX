@@ -1,0 +1,108 @@
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap mt-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="login_box_img">
+					<img class="img-fluid" src="img/login.jpg" alt="">
+					<div class="hover">
+						<h4>New to our website?</h4>
+						<p>There are advances being made in science and technology everyday, and a good example of this
+							is the</p>
+						<a class="primary-btn" href="/register">Create an Account</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="login_form_inner">
+					<div id="phonenumber-form">
+						<h3>Enter your number</h3>
+						<form class="row login_form send-otp" method="post" id="contactForm" autocomplete="off">
+							<div class="col-md-12 form-group">
+								<input type="number" class="form-control" id="phoneno" name="phoneno"
+									placeholder="Enter Your Number" onfocus="this.placeholder = ''"
+									onblur="this.placeholder = 'Enter Your Number'">
+							</div>
+
+							<div class="col-md-12">
+								<div id="senderror" style="color: rgb(173, 32, 32);">
+
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<button type="submit" value="submit" class="primary-btn">Send OTP</button>
+							</div>
+						</form>
+						<form class="row login_form submit-otp d-none" method="post" id="contactForm"
+							autocomplete="off">
+							<div class="col-md-12 form-group">
+								<input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter OTP'">
+							</div>
+
+							<div class="col-md-12">
+								<div id="submiterror" style="color: rgb(173, 32, 32);">
+
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<button type="submit" value="submit" class="primary-btn">submit OTP</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+
+
+
+<script>
+
+	const verifyOtp = async (phoneno, otp) => {
+		try {
+			const res = await axios({
+				method: 'POST', url: '/submit-otp', data: { phoneno,otp }
+			})
+			
+			if (res.data.status === "success") {
+				location.assign('/');
+			}
+		}
+		catch (err) {
+
+			document.querySelector('#submiterror').textContent = err.response.data.message;
+		}
+	}
+
+
+
+
+	const sendOtp = async (phoneno) => {
+		try {
+			const res = await axios({
+				method: 'POST', url: '/login-with-otp', data: { phoneno }
+			})
+			if (res.data.status === "success") {
+				document.querySelector('.send-otp').classList.add("d-none");
+				document.querySelector('.submit-otp').classList.remove("d-none");
+				document.querySelector('.submit-otp').addEventListener('submit', e => {
+					e.preventDefault();
+					const otp = document.getElementById('otp').value;
+					const phoneno = document.getElementById('phoneno').value;
+					verifyOtp(phoneno,otp);
+				});
+
+			}
+		} catch (err) {
+
+			document.querySelector('#senderror').textContent = err.response.data.message;
+		}
+	}
+	document.querySelector('.send-otp').addEventListener('submit', e => {
+		e.preventDefault();
+		const phoneno = document.getElementById('phoneno').value;
+		sendOtp(phoneno);
+	});
+
+</script>
