@@ -1,6 +1,7 @@
 var express = require('express');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
+const userAuth = require('../middlewares/userAuth');
 var router = express.Router();
 
 /* GET home page. */
@@ -30,5 +31,8 @@ router.get('/cycles',userController.renderCyclePage)
 // GET viewProduct 
 // @desc render product detail page 
 router.get('/view-product/:id',userController.renderViewProduct)
+
+//@desc render cart page
+router.get('/cart',userController.renderCartPage)
 
 module.exports = router;

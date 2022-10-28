@@ -25,7 +25,10 @@ module.exports=({
     renderViewProduct:async (req,res)=>{
         const productId=req.params.id;
         const product=await productHelper.findProduct(productId);
-        console.log(product);
         res.render("viewProduct",{user:true,product});
+    },
+
+    renderCartPage:(req,res)=>{
+        res.render("cart",{user:true})
     }
 })

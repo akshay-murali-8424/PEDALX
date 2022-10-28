@@ -21,9 +21,7 @@ module.exports = {
     if (email !== admin.email) {
       throw new AppError("invalid credentials", 401);
     }
-
     const isPasswordCorrect = await bcrypt.compare(password, admin.password);
-
     if (!isPasswordCorrect) {
       throw new AppError("invalid credentials", 401);
     }
@@ -43,7 +41,6 @@ module.exports = {
   // @route /register POST
   userRegister: asyncHandler(async (req, res) => {
     let { name, email, password, phoneno } = req.body;
-
     const isExistingEmail = await userHelper.findExistingEmail(email);
     const isExistingPhoneno = await userHelper.findExistingPhoneno(phoneno);
     if (isExistingEmail) {
@@ -61,7 +58,20 @@ module.exports = {
       const salt = await bcrypt.genSalt(10);
       // hashing password
       password = await bcrypt.hash(password, salt);
-      await userHelper.addUser(name, email, password, phoneno);
+      const user=await userHelper.addUser(name, email, password, phoneno);
+      const token = jwt.sign({ userId:user.insertedId }, process.env.JWT_SECRET, {
+        expiresIn: "2d",
+      });
+      res.cookie("userjwt", token, {
+        httpOnly: true,
+        sameSite: true,
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      res.json({
+        status: "success",
+        message: "success",
+      });
       res.json({
         status: "success",
         message: "success",
@@ -69,8 +79,9 @@ module.exports = {
     }
   }),
 
-  // @desc verify admin login
-  // @route /admin/login POST
+
+  // @desc verify user login
+  // @route login POST
   verifyUserLogin: asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await userHelper.findExistingEmail(email);

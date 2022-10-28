@@ -4,6 +4,7 @@ const multer = require('multer');
 const adminAuth = require('../middlewares/adminAuth');
 const adminController = require('../controllers/adminController');
 const authController = require('../controllers/authController');
+const { adminAuthentication } = require('../middlewares/adminAuth');
 
 const storage = multer.diskStorage({
   destination: './public/uploads/',
@@ -32,29 +33,29 @@ router.route('/login')
 router.get('/',adminAuth.adminAuthentication,adminController.renderHomePage)
 
 //@desc admin product management
-router.get('/product',adminController.renderProductPage);
+router.get('/product',adminAuth.adminAuthentication,adminController.renderProductPage);
 
 router.route('/addProduct')
-.get(adminController.renderAddProduct)
-.post(upload.array('image',4), adminController.addProduct);
+.get(adminAuth.adminAuthentication,adminController.renderAddProduct)
+.post(adminAuth.adminAuthentication,upload.array('image',4), adminController.addProduct);
 
 //@desc admin category management
-router.get('/category',adminController.renderCategoryPage)
+router.get('/category',adminAuth.adminAuthentication,adminController.renderCategoryPage)
 
 //@desc admin category adding page render
 router.route('/addCategory')
-.get(adminController.renderAddCategory)
+.get(adminAuth.adminAuthentication,adminController.renderAddCategory)
 //@desc admin category adding
-.post(adminController.addCategory)
+.post(adminAuth.adminAuthentication,adminController.addCategory)
 
 //@desc admin brand management
-router.get('/brand',adminController.renderBrandPage)
+router.get('/brand',adminAuth.adminAuthentication,adminController.renderBrandPage)
 
 //@desc admin category adding page render
 router.route('/addBrand')
-.get(adminController.renderAddBrand)
+.get(adminAuth.adminAuthentication,adminController.renderAddBrand)
 //@desc admin category adding
-.post(adminController.addBrand)
+.post(adminAuth.adminAuthentication,adminController.addBrand)
 
 
 module.exports = router;

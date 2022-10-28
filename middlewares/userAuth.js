@@ -2,20 +2,20 @@ const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 
 module.exports = {
-  adminAuthentication: async (req, res, next) => {
+  userAuthentication: async (req, res, next) => {
     try {
-      if(req.cookies.adminjwt){
+      if(req.cookies.userjwt){
       const isLoggedIn = await promisify(jwt.verify)(
-        req.cookies.adminjwt,
+        req.cookies.userjwt,
         process.env.JWT_SECRET
       );
       if(isLoggedIn){
         next();
       }else{
-        res.redirect('/admin/login')
+        res.redirect('/login')
       }
     }else{
-        res.redirect('/admin/login');
+        res.redirect('/login');
     }
     } catch (err) {
       console.log(err);

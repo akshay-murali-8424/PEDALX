@@ -13,6 +13,8 @@ module.exports={
     },
 
     addUser:async(name,email,password,phoneno)=>{
-        getDb().collection('userData').insertOne({name,email,password,phoneno});
+        const user=await getDb().collection('userData').insertOne({name,email,password,phoneno});
+        return user;
+
     },
 }
