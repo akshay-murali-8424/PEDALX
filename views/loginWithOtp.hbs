@@ -16,7 +16,7 @@
 			<div class="col-lg-6">
 				<div class="login_form_inner">
 					<div id="phonenumber-form">
-						<h3>Enter your number</h3>
+						<h3 id="enterno">Enter your number</h3>
 						<form class="row login_form send-otp" method="post" id="contactForm" autocomplete="off">
 							<div class="col-md-12 form-group">
 								<input type="number" class="form-control" id="phoneno" name="phoneno"
@@ -33,6 +33,7 @@
 								<button type="submit" value="submit" class="primary-btn">Send OTP</button>
 							</div>
 						</form>
+						<h3 id="enterotp" class="d-none">Enter your OTP</h3>
 						<form class="row login_form submit-otp d-none" method="post" id="contactForm"
 							autocomplete="off">
 							<div class="col-md-12 form-group">
@@ -85,7 +86,9 @@
 			})
 			if (res.data.status === "success") {
 				document.querySelector('.send-otp').classList.add("d-none");
+                document.querySelector('#enterno').classList.add("d-none")
 				document.querySelector('.submit-otp').classList.remove("d-none");
+                document.querySelector('#enterotp').classList.remove("d-none")
 				document.querySelector('.submit-otp').addEventListener('submit', e => {
 					e.preventDefault();
 					const otp = document.getElementById('otp').value;

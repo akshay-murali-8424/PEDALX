@@ -22,7 +22,7 @@
         <!-- Navbar End -->
         
         <div class="container">
-            <form action="/admin/addBrand" method="post" autocomplete="off">
+            <form action="/admin/addBrand" method="post" autocomplete="off" id="addBrand">
             <div class="bg-secondary rounded h-100 p-4" style="margin-top: 3rem;">
                 <h6 class="mb-4">Add Brand</h6>
                 <div class="form-floating mb-3">
@@ -33,6 +33,7 @@
                     <textarea class="form-control" placeholder="Description" id="floatingTextarea" name="description"
                         style="height: 100px;"></textarea>
                     <label for="floatingTextarea">Description</label>
+                    <br>
             <button class="btn btn-primary mt-3" type="submit">Add</button>
                 </div>
             </div>
@@ -44,3 +45,5 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+
+    <script src="/validations/addBrand.js"></script>

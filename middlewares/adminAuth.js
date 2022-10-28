@@ -10,6 +10,7 @@ module.exports = {
         req.cookies.adminjwt,
         process.env.JWT_SECRET
       );
+      console.log(isLoggedIn);
       if(isLoggedIn){
         next();
       }else{

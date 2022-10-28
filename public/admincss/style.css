@@ -299,3 +299,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.errors{
+    color: red;
+    position: static !important ;
+}

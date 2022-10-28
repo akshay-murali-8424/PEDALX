@@ -5,18 +5,18 @@
 			<div class="col-lg-1" id="thumbnaillist">
 
                     <!-- Slider -->
-                    <div class="thumbnail_images alignRow ">
+                    <div class="thumbnail_images alignRow">
                                     <div class="imageColumn">
-                                        <img onmouseenter="changeImage('{{this.images.[1]}}')" src={{product.[0].images.[0]}} style="width:100%;">
+                                        <img onclick="changeImage('{{product.[0].images.[0]}}')" src={{product.[0].images.[0]}} style="width:100%;">
                                     </div>
                                     <div class="imageColumn">
-                                        <img onmouseenter="changeImage('{{this.images.[2]}}')" src={{product.[0].images.[0]}} style="width:100%">
+                                        <img onclick="changeImage('{{product.[0].images.[1]}}')" src={{product.[0].images.[1]}} style="width:100%">
                                     </div>
                                     <div class="imageColumn">
-                                        <img onmouseenter="changeImage('{{this.images.[3]}}')" src={{product.[0].images.[0]}} style="width:100%">
+                                        <img onclick="changeImage('{{product.[0].images.[2]}}')" src={{product.[0].images.[2]}} style="width:100%">
                                     </div>
                                     <div class="imageColumn">
-                                        <img onmouseenter="changeImage('{{this.images.[1]}}')" src={{product.[0].images.[0]}} style="width:100%">
+                                        <img onclick="changeImage('{{product.[0].images.[3]}}')" src={{product.[0].images.[3]}} style="width:100%">
                                     </div>                       
                         </div>
 
@@ -413,10 +413,10 @@
 
 <script src="/javascripts/imagezoom.js"></script>
 <script>
-//   function changeImage(element) {
- //       var main_product_image = document.getElementById('zoom');
-   //     main_product_image.src = element;
-   // }
+  function changeImage(element) {
+       var main_product_image = document.getElementById('zoom');
+       main_product_image.src = element;
+    }
     $('#zoom').imagezoomsl();
 </script>
 

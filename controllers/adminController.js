@@ -21,10 +21,10 @@ module.exports = {
       if (isLoggedIn) {
         res.redirect("/admin");
       } else {
-        res.render("adminLogin");
+        res.render("adminLogin",{admin:true});
       }
     } else {
-      res.render("adminLogin");
+      res.render("adminLogin",{admin:true});
     }
   },
 

@@ -1,19 +1,17 @@
 
-  const login = async (email, password) => {
+ const login = async (email,password) => {
     try {
       const res = await axios({
-        method: 'POST', url: '/admin/login', data: { email, password }
+        method: 'POST', url: '/login', data: {email,password}
       })
-  
-      location.assign('/admin')
-  
+		location.assign('/');
     } catch (err) {
-      document.querySelector('.alert').textContent = "invalid credentials";
+	  document.querySelector('.alert').textContent = err.response.data.message;
+      }
     }
-  }
 
 $(document).ready(function () {
-    $("#adminLogin").validate({
+    $("#userLogin").validate({
       errorClass: 'errors',
       rules: {
         email: {
@@ -34,12 +32,8 @@ $(document).ready(function () {
       },
       submitHandler:function(){
         const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        login(email, password);
+       const password = document.getElementById('password').value;
+       login(email,password);
       }
     });
   });
-
-
-
-

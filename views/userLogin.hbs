@@ -16,9 +16,9 @@
 				<div class="col-lg-6">
 					<div class="login_form_inner">
 						<h3>Log in to enter</h3>
-						<form class="row login_form" method="post" id="contactForm" autocomplete="off">
+						<form class="row login_form" method="post" id="userLogin" autocomplete="off">
 							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+								<input type="email" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
 							</div>
 							<div class="col-md-12 form-group">
 								<input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
@@ -40,33 +40,7 @@
 		</div>
 	</section>
 	
-<script>
- const login = async (email,password) => {
-    try {
-      const res = await axios({
-        method: 'POST', url: '/login', data: {email,password}
-      })
-	  if(res.data.status==="email"){
-		document.querySelector('.alert').textContent=res.data.message;
-	  }else if(res.data.status==="password"){
-		document.querySelector('.alert').textContent=res.data.message;
-	  }else{
-		location.assign('/');
-	  }
-      
-    } catch (err) {
-	  console.log(err)
-      }
-    }
-
-	document.querySelector('.login_form').addEventListener('submit', e => {
-    e.preventDefault(); 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    login(email,password);
-    });
-
-</script>
+<script src="/validations/userLogin.js"></script>
 
 
 	
