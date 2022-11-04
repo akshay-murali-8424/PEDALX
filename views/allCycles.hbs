@@ -19,11 +19,11 @@
 			<div class="sidebar-categories">
 				<div class="head">Browse Categories</div>
 				<ul class="main-categories">
-                   <li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>MOUNTAIN</a>
+					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>MOUNTAIN</a>
 					</li>
-                   <li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>HYBRID</a>
+					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>HYBRID</a>
 					</li>
-                   <li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>ROAD</a>
+					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>ROAD</a>
 					</li>
 				</ul>
 			</div>
@@ -93,31 +93,27 @@
 					<div class="col-lg-4 col-md-6">
 						<div class="single-product">
 							<a href="/view-product/{{this._id}}">
-							<img class="img-fluid" src={{this.images.[0]}} alt="" width="160px">
+								<img class="img-fluid" src={{this.images.[0]}} width="160px">
 							</a>
 							<div class="product-details">
 								<a href="/view-product/{{this._id}}">
-								<h6>{{this.name}}</h6>
+									<h6>{{this.name}}</h6>
 								</a>
 								<div class="price">
-									<h6>{{this.price}}</h6>
-									<h6 class="l-through">$210.00</h6>
+									<h6>₹{{this.price}}</h6>
+									<h6 class="l-through">₹210.00</h6>
 								</div>
 								<div class="prd-bottom">
 
-									<a href="" class="social-info">
-										<span class="ti-bag"></span>
-										<p class="hover-text">add to bag</p>
-									</a>
-									<a href="" class="social-info">
+									<div class="social-info addToCart" data-product={{this._id}}>
+										<span class="ti-bag" id="span"></span>
+										<p class="hover-text">add to cart</p>
+									</div>
+									<div class="social-info addToWishlist" data-product="{{this._id}}">
 										<span class="lnr lnr-heart"></span>
 										<p class="hover-text">Wishlist</p>
-									</a>
-									<a href="" class="social-info">
-										<span class="lnr lnr-sync"></span>
-										<p class="hover-text">compare</p>
-									</a>
-									<a href="" class="social-info">
+									</div>
+									<a href="/view-product/{{this._id}}" class="social-info">
 										<span class="lnr lnr-move"></span>
 										<p class="hover-text">view more</p>
 									</a>
@@ -152,3 +148,85 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	const addToCart = async (productId) => {
+		try {
+			const res = await axios({
+				method: 'GET', url: `/add-to-cart/${productId}`
+			})
+			if(res.data.status==="success"){
+			Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+            }else{
+				Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+			location.assign('/login')
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+
+	const addToWishlist = async (productId) => {
+		try {
+			const res = await axios({
+				method: 'GET', url: `/add-to-wishlist/${productId}`
+			})
+			if(res.data.status==="success"){
+			Toastify({
+                text: "Product is added to wishlist",
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+            }else{
+				Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	document.querySelectorAll('.addToCart').forEach(item => {
+
+		item.addEventListener('click', function (e) {
+			e.preventDefault();
+			addToCart(this.dataset.product);
+		});
+	})
+
+	document.querySelectorAll('.addToWishlist').forEach(item => {
+
+		item.addEventListener('click', function (e) {
+			e.preventDefault();
+	        addToWishlist(this.dataset.product);
+		});
+	})
+</script>

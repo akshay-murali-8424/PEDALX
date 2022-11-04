@@ -1,8 +1,9 @@
 const { getDb } = require("../db")
 const mongodb=require('mongodb')
+const asyncHandler = require("express-async-handler");
 
 module.exports={
-    findAll:async()=>{
+    findAll:asyncHandler( async()=>{
         const products=await getDb().collection('products').aggregate([
             {
                 $lookup:{
@@ -22,14 +23,16 @@ module.exports={
             } 
         ]).toArray();
         return products;
-    },
+    }),
 
 
-    addProduct:async (name,description,price,category,brand,images)=>{
-        await getDb().collection('products').insertOne({name,description,price,category:mongodb.ObjectId(category),brand:mongodb.ObjectId(brand),images})
-    },
+    addProduct:asyncHandler(async (name,description,price,category,brand,stock,images)=>{
+        const newPrice=parseInt(price)
+        stock=parseInt(stock)
+        await getDb().collection('products').insertOne({name,description,price:newPrice,category:mongodb.ObjectId(category),brand:mongodb.ObjectId(brand),stock,images})
+    }),
 
-    findProduct:async(id)=>{
+    findProduct:asyncHandler(async(id)=>{
         const product=await getDb().collection('products').aggregate([
             {
                $match:{
@@ -54,5 +57,5 @@ module.exports={
             } 
         ]).toArray();
         return product;
-    },
+    }),
 }

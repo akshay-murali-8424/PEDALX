@@ -1,0 +1,81 @@
+<div class="container-fluid position-relative d-flex p-0">
+    <!-- Spinner Start -->
+    <div id="spinner"
+        class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+    {{>adminSideBar}}
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+            <a href="/admin" class="navbar-brand d-flex d-lg-none me-4">
+                <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+            </a>
+            <a href="#" class="sidebar-toggler flex-shrink-0">
+                <i class="fa fa-bars"></i>
+            </a>
+        </nav>
+        <!-- Navbar End -->
+
+        <div class="container">
+            <form action="/admin/addProduct" method="post" autocomplete="off" enctype="multipart/form-data">
+                {{#if error}}
+                <p class="text-white">{{this.error}}</p>
+                {{/if}}
+                <div class="bg-secondary rounded h-100 p-4" style="margin-top: 3rem;">
+                    <h6 class="mb-4">Edit Product</h6>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Category" name="name">
+                        <label for="floatingInput">Product name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" placeholder="Description" id="floatingTextarea"
+                            name="description" style="height: 100px;"></textarea>
+                        <label for="floatingTextarea">Description</label>
+
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="price" placeholder="Category" name="price">
+                        <label for="price">Price</label>
+
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
+                            name="category">
+                            <option selected="">Select Category</option>
+                            {{#each categories}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
+                            name="brand">
+                            <option selected="">Select Brand</option>
+                            {{#each brands}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                     <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="price" placeholder="stock" name="stock">
+                        <label for="stock">Stock</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFileMultiple" class="form-label">Images</label>
+                        <input class="form-control bg-dark" type="file" id="formFileMultiple" multiple="" name="image">
+                        <button class="btn btn-primary mt-3" type="submit">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>

@@ -1,0 +1,192 @@
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+      <div class="col-first">
+        <h1>Checkout</h1>
+        <nav class="d-flex align-items-center">
+          <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+          <a href="single-product.html">Checkout</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Checkout Area =================-->
+<section class="checkout_area section_gap">
+  <div class="container">
+    <div class="cupon_area">
+      <div class="check_title">
+        <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+      </div>
+      <input type="text" placeholder="Enter coupon code">
+      <a class="tp_btn" href="#">Apply Coupon</a>
+    </div>
+    <div class="billing_details">
+      <div class="row">
+        <div class="col-lg-8">
+          <h3>Select an address</h3>
+          <form class="contact_form" action="#" method="post" novalidate="novalidate">
+            {{#each user.addresses}}
+            <div class="payment_item ">
+              <div class="radion_btn">
+                <input type="radio" id="{{this.id}}" name="address" value="{{this.id}}">
+                <label for="{{this.id}}">{{this.name}}, {{this.house}}, {{this.area}}, {{this.state}}, {{this.country}},
+                  {{this.pincode}}</label>
+                <div class="check"></div>
+              </div>
+            </div>
+            {{/each}}
+            <div class="alert alert-danger address-alert d-none" role="alert">
+              Please select an address to place order
+            </div>
+          </form>
+          <button class="primary-btn add-address-btn mt-3" data-toggle="modal" data-target="#exampleModalCenter">Add new
+            address</button>
+        </div>
+        <div class="col-lg-4">
+          <div class="order_box">
+            <h2>Your Order</h2>
+            <ul class="list">
+              <li><a href="#">Product <span>Total</span></a></li>
+              {{#each cart}}
+              <li><a href="#">{{this.productDetails.name}}<span class="middle">x{{this.products.quantity}}</span> <span
+                    class="last">₹{{toLocaleString this.subTotal}}</span></a></li>
+              {{/each}}
+            </ul>
+            <ul class="list list_2">
+              <li><a href="#">Grandtotal <span>₹{{toLocaleString total}}</span></a></li>
+            </ul>
+            <div class="payment_item">
+              <div class="radion_btn">
+                <input type="radio" id="f-option5" name="payment-option" value="cod">
+                <label for="f-option5">Cash on Delivery</label>
+                <div class="check"></div>
+              </div>
+            </div>
+            <div class="alert alert-danger d-none payment-alert" role="alert">
+              Please select an payment method to place order
+            </div>
+            {{!-- <div class="payment_item active">
+              <div class="radion_btn">
+                <input type="radio" id="f-option6" name="selector">
+                <label for="f-option6">Paypal </label>
+                <img src="img/product/card.jpg" alt="">
+                <div class="check"></div>
+              </div>
+
+            </div>
+            <div class="payment_item ">
+              <div class="radion_btn">
+                <input type="radio" id="f" name="selector">
+                <label for="f">Paypal </label>
+                <img src="img/product/card.jpg" alt="">
+                <div class="check"></div>
+              </div>
+
+            </div> --}}
+
+            <a class="primary-btn" id="proceed">Place Order</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--================End Checkout Area =================-->
+
+{{!-- add address modal --}}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add new address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger d-none" role="alert">
+        </div>
+        <form id="add-address">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Name</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="name" id="name">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Flat, House no., Building, Company, Apartment</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="house" id="house">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Area, Street, Sector, Village</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="area" id="area">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Town/City</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="city" id="city">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">State</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="state" id="state">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Country</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="country" id="country">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Pincode</label>
+            <input type="number" class="form-control" aria-describedby="emailHelp" name="pincode" id="pincode">
+          </div>
+
+          <button type="submit" class="primary-btn add-address-btn">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .add-address-btn {
+    height: 38px;
+    border-radius: 6px;
+    border: 0;
+    line-height: normal;
+  }
+</style>
+
+<script src="/validations/addAddress.js"></script>
+
+<script>
+   	const placeOrder = async (addressId,paymentMethod) => {
+		try {
+			const res = await axios({
+				method: 'POST', url: '/checkout', data: {addressId,paymentMethod}
+			})
+      location.assign('/')
+		}
+		catch (err) {
+       console.log(err)
+		}
+	}
+  
+
+  document.getElementById('proceed').addEventListener('click', e => {
+    e.preventDefault();
+    if (!document.querySelector('input[name="address"]:checked')) {
+      document.querySelector('.address-alert').classList.remove('d-none')
+      return
+    } 
+     if (!document.querySelector('input[name="payment-option"]:checked')) {
+      document.querySelector('.payment-alert').classList.remove('d-none')
+      return
+    } 
+    const addressId=document.querySelector('input[name="address"]:checked').value;
+    const paymentMethod=document.querySelector('input[name="payment-option"]:checked').value;
+    placeOrder(addressId,paymentMethod);
+    
+  })
+
+</script>

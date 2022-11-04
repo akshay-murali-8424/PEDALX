@@ -44,22 +44,9 @@
 						<li><a href="#"><span>Availibility</span> : In Stock</a></li>
 					</ul>
 					<p>{{product.[0].description}}</p>
-
-					<div class="product_count">
-						<label for="qty">Quantity:</label>
-						<input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-							class="input-text qty">
-						<button
-							onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-							class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-						<button
-							onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-							class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-					</div>
 					<div class="card_area d-flex align-items-center">
-						<a class="primary-btn" href="#">Add to Cart</a>
-						<a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-						<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+						<div class="primary-btn addToCart" data-product={{product.[0]._id}}>Add to Cart</div>
+						<div class="icon_btn addToWishlist" data-product="{{product.[0]._id}}"><i class="lnr lnr lnr-heart"></i></div>
 					</div>
 				</div>
 			</div>
@@ -411,12 +398,88 @@
 </section>
 <!--================End Product Description Area =================-->
 
-<script src="/javascripts/imagezoom.js"></script>
 <script>
+	setTimeout(()=>{
+
+    $('#zoom').imagezoomsl();
+	},100)
   function changeImage(element) {
        var main_product_image = document.getElementById('zoom');
        main_product_image.src = element;
+	       $('#zoom').imagezoomsl();
+
     }
-    $('#zoom').imagezoomsl();
+
+
+	const addToCart = async (productId) => {
+		try {
+			console.log(productId)
+			const res = await axios({
+				method: 'GET', url: `/add-to-cart/${productId}`
+			})
+			if(res.data.status==="success"){
+			Toastify({
+                text: "Product is added to cart",
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+            }else{
+			location.assign('/login')
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	const addToWishlist = async (productId) => {
+		try {
+			const res = await axios({
+				method: 'GET', url: `/add-to-wishlist/${productId}`
+			})
+			if(res.data.status==="success"){
+			Toastify({
+                text: "Product is added to wishlist",
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+            }else{
+				Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	document.querySelector('.addToCart').addEventListener('click', e =>{
+			e.preventDefault();
+		    productId=document.querySelector('.addToCart').dataset.product;
+			addToCart(productId);
+		}); 
+
+	document.querySelectorAll('.addToWishlist').forEach(item => {
+
+		item.addEventListener('click', function (e) {
+			e.preventDefault();
+	        addToWishlist(this.dataset.product);
+		});
+	})
+	
+
 </script>
 

@@ -4,7 +4,7 @@ const multer = require('multer');
 const adminAuth = require('../middlewares/adminAuth');
 const adminController = require('../controllers/adminController');
 const authController = require('../controllers/authController');
-const { adminAuthentication } = require('../middlewares/adminAuth');
+
 
 const storage = multer.diskStorage({
   destination: './public/uploads/',
@@ -29,6 +29,8 @@ router.route('/login')
 // post request 
 .post(authController.verifyAdminLogin)
 
+
+
 //@desc admin home page 
 router.get('/',adminAuth.adminAuthentication,adminController.renderHomePage)
 
@@ -38,6 +40,8 @@ router.get('/product',adminAuth.adminAuthentication,adminController.renderProduc
 router.route('/addProduct')
 .get(adminAuth.adminAuthentication,adminController.renderAddProduct)
 .post(adminAuth.adminAuthentication,upload.array('image',4), adminController.addProduct);
+
+router.get('/edit-product/:id',adminAuth.adminAuthentication,adminController.renderEditProduct);
 
 //@desc admin category management
 router.get('/category',adminAuth.adminAuthentication,adminController.renderCategoryPage)

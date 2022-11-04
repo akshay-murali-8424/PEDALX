@@ -58,8 +58,8 @@ module.exports = {
       const salt = await bcrypt.genSalt(10);
       // hashing password
       password = await bcrypt.hash(password, salt);
-      const user=await userHelper.addUser(name, email, password, phoneno);
-      const token = jwt.sign({ userId:user.insertedId }, process.env.JWT_SECRET, {
+      const user = await userHelper.addUser(name, email, password, phoneno);
+      const token = jwt.sign({ userId: user.insertedId }, process.env.JWT_SECRET, {
         expiresIn: "2d",
       });
       res.cookie("userjwt", token, {
@@ -154,8 +154,10 @@ module.exports = {
           to: `+91${req.body.phoneno}`,
           code: req.body.otp,
         });
+      console.log(data.status)
       if (data.status == "approved") {
-        const user = userHelper.findExistingPhoneno(req.body.phoneno);
+        const user =await userHelper.findExistingPhoneno(req.body.phoneno);
+        console.log({ user });
         const userId = mongodb.ObjectId(user._id);
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
           expiresIn: "2d",
@@ -168,6 +170,8 @@ module.exports = {
         });
         res.json({
           status: "success",
+          message: "success",
+
         });
       } else {
         res.status(400).json({
@@ -182,4 +186,12 @@ module.exports = {
       });
     }
   },
+
+  userLogout: (req, res) => {
+    res.cookie('userjwt', 'loggedout', {
+      expiresIn: new Date(Date.now()),
+      httpOnly: true
+    })
+    res.redirect('/');
+  }
 };

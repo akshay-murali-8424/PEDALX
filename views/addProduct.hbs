@@ -23,6 +23,9 @@
 
         <div class="container">
             <form action="/admin/addProduct" method="post" autocomplete="off" enctype="multipart/form-data">
+                {{#if error}}
+                <p class="text-white">{{this.error}}</p>
+                {{/if}}
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 3rem;">
                     <h6 class="mb-4">Add Product</h6>
                     <div class="form-floating mb-3">
@@ -33,33 +36,39 @@
                         <textarea class="form-control" placeholder="Description" id="floatingTextarea"
                             name="description" style="height: 100px;"></textarea>
                         <label for="floatingTextarea">Description</label>
-                        
+
                     </div>
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="price" placeholder="Category" name="price">
                         <label for="price">Price</label>
-                       
-                    </div>
-                        <div class="mb-3">
-                      <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="category">
-                                <option selected="">Select Category</option>
-                                {{#each categories}}
-                                <option value="{{this._id}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
-                    </div>
-                        <div class="mb-3">
-                      <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="brand">
-                                <option selected="">Select Brand</option>
-                               {{#each brands}}
-                                <option value="{{this._id}}">{{this.name}}</option>
-                                {{/each}}
-                            </select>
+
                     </div>
                     <div class="mb-3">
-                                <label for="formFileMultiple" class="form-label">Images</label>
-                                <input class="form-control bg-dark" type="file" id="formFileMultiple" multiple="" name="image">
-                                <button class="btn btn-primary mt-3" type="submit">Add</button>
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
+                            name="category">
+                            <option selected="">Select Category</option>
+                            {{#each categories}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"
+                            name="brand">
+                            <option selected="">Select Brand</option>
+                            {{#each brands}}
+                            <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                     <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="price" placeholder="stock" name="stock">
+                        <label for="stock">Stock</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFileMultiple" class="form-label">Images</label>
+                        <input class="form-control bg-dark" type="file" id="formFileMultiple" multiple="" name="image">
+                        <button class="btn btn-primary mt-3" type="submit">Add</button>
                     </div>
                 </div>
             </form>

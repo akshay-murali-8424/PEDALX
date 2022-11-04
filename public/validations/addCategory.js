@@ -12,10 +12,10 @@ $(document).ready(function () {
       messages: {
 
         name: {
-          required: "Please enter your password",
+          required: "Please enter category",
         },  
         description: {
-          required: "Please enter your email",
+          required: "Please enter description",
         },
       },
     });

@@ -6,8 +6,8 @@
                 <div class="col-first">
                     <h1>Shopping Cart</h1>
                     <nav class="d-flex align-items-center">
-                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="category.html">Cart</a>
+                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="/cart">Cart</a>
                     </nav>
                 </div>
             </div>
@@ -15,6 +15,7 @@
     </section>
     <!-- End Banner Area -->
 
+    {{#if isEmpty}}
     <!--================Cart Area =================-->
     <section class="cart_area">
         <div class="container">
@@ -30,90 +31,33 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{#each cart}}
                             <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
+                                            <img src={{this.productDetails.images.[0]}} width="100px">
                                         </div>
                                         <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
+                                            <p>{{this.productDetails.name}}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>$360.00</h5>
+                                    <h5>{{toLocaleString this.productDetails.price}}</h5>
                                 </td>
                                 <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                    <div>
+                                        <span class="btn btn-dark" onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',-1,'{{this.productDetails.price}}')"><i class="fas fa-minus"></i></span>
+                                        <button class="btn btn-light" id="{{products.productId}}" style="cursor: default;">{{products.quantity}}</button>
+                                        <span class="btn btn-primary" onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',1,'{{this.productDetails.price}}')"><i class="fas fa-plus"></i></span>
                                     </div>
                                 </td>
                                 <td>
-                                    <h5>$720.00</h5>
+                                    <h5 class="{{products.productId}} subTotal">₹{{toLocaleString this.subTotal}}</h5>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
-                                        </div>
-                                        <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$360.00</h5>
-                                </td>
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$720.00</h5>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src="img/cart.jpg" alt="">
-                                        </div>
-                                        <div class="media-body">
-                                            <p>Minimalistic shop for multipurpose use</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$360.00</h5>
-                                </td>
-                                <td>
-                                    <div class="product_count">
-                                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                                            class="input-text qty">
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                                            class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                            class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>$720.00</h5>
-                                </td>
-                            </tr>
+                           {{/each}}
                             <tr class="bottom_button">
                                 <td>
                                     <a class="gray_btn" href="#">Update Cart</a>
@@ -140,69 +84,66 @@
 
                                 </td>
                                 <td>
-                                    <h5>Subtotal</h5>
+                                    <h5>Grandtotal</h5>
                                 </td>
                                 <td>
-                                    <h5>$2160.00</h5>
+                                    <h5 id="grandTotal">₹{{toLocaleString total}}</h5>
                                 </td>
                             </tr>
-                            <tr class="shipping_area">
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    <h5>Shipping</h5>
-                                </td>
-                                <td>
-                                    <div class="shipping_box">
-                                        <ul class="list">
-                                            <li><a href="#">Flat Rate: $5.00</a></li>
-                                            <li><a href="#">Free Shipping</a></li>
-                                            <li><a href="#">Flat Rate: $10.00</a></li>
-                                            <li class="active"><a href="#">Local Delivery: $2.00</a></li>
-                                        </ul>
-                                        <h6>Calculate Shipping <i class="fa fa-caret-down" aria-hidden="true"></i></h6>
-                                        <select class="shipping_select">
-                                            <option value="1">Bangladesh</option>
-                                            <option value="2">India</option>
-                                            <option value="4">Pakistan</option>
-                                        </select>
-                                        <select class="shipping_select">
-                                            <option value="1">Select a State</option>
-                                            <option value="2">Select a State</option>
-                                            <option value="4">Select a State</option>
-                                        </select>
-                                        <input type="text" placeholder="Postcode/Zipcode">
-                                        <a class="gray_btn" href="#">Update Details</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="out_button_area">
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" href="#">Continue Shopping</a>
-                                        <a class="primary-btn" href="#">Proceed to checkout</a>
-                                    </div>
-                                </td>
-                            </tr>
+                           
                         </tbody>
                     </table>
+                                    <div class="checkout_btn_inner d-flex align-items-center justify-content-end">
+                                        <a class="gray_btn" href="/">Continue Shopping</a>
+                                        <a class="primary-btn checkout-button" href="/checkout">Proceed to checkout</a>
+                                    </div>
                 </div>
             </div>
         </div>
     </section>
     <!--================End Cart Area =================-->
+    {{else}}
+    <div class="emptycart">
+    <img src="/img/emptycart.jpg" style="width: 500px;">
+    </div>
+    {{/if}}
 
- 
+
+<style>
+    .checkout-button{
+        border-radius: 0;
+    }
+    .emptycart{
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+<script>
+  
+  const changeQuantity=async (cartId,productId,count,price)=>{
+    const price1=parseInt(price)
+    const quantity=parseInt(document.getElementById(productId).textContent)
+    try {
+      const res = await axios({
+        method: 'POST', url: '/change-product-quantity', data: {cartId,productId,count}
+      })
+      if(res.data.status==="removed"){
+        location.reload();
+      }else{
+        let currentQuantity=document.getElementById(productId)
+        currentQuantity.textContent=parseInt(currentQuantity.textContent)+count;
+       document.getElementsByClassName(productId)[0].innerHTML=`₹${((quantity+count)*price1).toLocaleString()}`
+       const total=document.querySelectorAll('.subTotal')
+        let sum=0;
+          for(i=0;i<total.length;i++){
+            sum=total[i].innerHTML.slice(1).replaceAll(',','')*1+sum;
+        }
+        document.getElementById('grandTotal').textContent=`₹${sum.toLocaleString()}`;
+      }
+    } catch (err) {
+	   console.log(err);
+      }
+    }
+
+</script>

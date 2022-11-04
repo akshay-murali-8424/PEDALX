@@ -45,21 +45,40 @@ module.exports = {
 
   renderAddProduct: async (req, res) => {
     const productClass="active";
-    const categories = await categoryHelper.findAll();
-    const brands = await brandHelper.findAll();
-    res.render("addProduct", { admin: true, categories, brands, productClass});
+    const [categories,brands] = await Promise.all([
+      categoryHelper.findAll(),
+      brandHelper.findAll()
+    ])
+    const error=req.query.error;
+    req.query.error=null;
+    res.render("addProduct", { admin: true, categories, brands, productClass,error});
   },
 
   addProduct: async (req, res) => {
-    const {name,description,price,category,brand}=req.body;
-    const images = await Promise.all(
-      req.files.map(async (file) => {
-        const {url} = await cloudinary.uploader.upload(file.path);
-        return url;
-      })
-    )
-    await productHelper.addProduct(name,description,price,category,brand,images);
-    res.redirect('/admin/product')
+    try{ 
+      const {name,description,price,category,brand,stock}=req.body;
+      const images = await Promise.all(
+        req.files.map(async (file) => {
+          const {url} = await cloudinary.uploader.upload(file.path);
+          return url;
+        })
+        )
+        await productHelper.addProduct(name,description,price,category,brand,stock,images);
+        res.redirect('/admin/product')
+      }
+      catch(err){
+        res.redirect(`/admin/addproduct?error=${err.message}`)
+      }
+  },
+
+  renderEditProduct:async(req,res)=>{
+    const productId=req.params.id
+    const [products,categories,brands]=await Promise.all([
+      productHelper.findProduct(productId),
+      categoryHelper.findAll(),
+      brandHelper.findAll()
+    ])
+    res.render('editProduct',{admin:true,products,categories,brands})
   },
 
   renderCategoryPage: async (req, res) => {
@@ -95,4 +114,5 @@ module.exports = {
     await brandHelper.addBrand(name, description);
     res.redirect("/admin/brand");
   },
+
 };

@@ -34,6 +34,7 @@
                                     <th scope="col">Image</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Brand</th>
+                                    <th scope="col">Stock</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -46,9 +47,10 @@
                                     <td><img src={{this.images.[0]}} width="35px"></td>
                                     <td>{{this.categoryDetails.[0].name}}</td>
                                     <td>{{this.brandDetails.[0].name}}</td>
+                                    <td>{{this.stock}}</td>
                                     <td>
-                                        <i class="fas fa-edit"></i>
-                                        <i class="fas fa-trash"></i>
+                                       <a href="/admin/edit-product/{{this._id}}" style="color: rgb(19, 62, 155);"><i class="fas fa-edit"></i></a> 
+                                        <a href=""><i class="fas fa-trash"></i></a> 
                                     </td>
                                 </tr>
                                 {{/each}}
