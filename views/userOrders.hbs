@@ -154,9 +154,26 @@
                             <div class="col-md-6">
                              Total amount: <span class="highlight">₹{{toLocaleString this.total}}</span> 
                             </div>
+                            {{#eq this.orderStatus "confirmed"}}
                             <div class="col-md-6 text-right">
-                             Order Status: <span class="highlight">Confirmed</span> 
+                             Order Status: <span class="highlight" style="color: #d8d813;">{{this.orderStatus}}</span> 
                             </div>
+                            {{/eq}}
+                            {{#eq this.orderStatus "pending"}}
+                            <div class="col-md-6 text-right">
+                             Order Status: <span class="highlight" style="color: #d8d813;">{{this.orderStatus}}</span> 
+                            </div>
+                            {{/eq}}
+                            {{#eq this.orderStatus "delivered"}}
+                            <div class="col-md-6 text-right">
+                             Order Status: <span class="highlight" style="color: rgba(15, 159, 32, 0.855)";>{{this.orderStatus}}</span> 
+                            </div>
+                            {{/eq}}
+                            {{#eq this.orderStatus "cancelled"}}
+                            <div class="col-md-6 text-right">
+                             Order Status: <span class="highlight" style="color: red;">{{this.orderStatus}}</span> 
+                            </div>
+                            {{/eq}}
                             <div class="col-md-6">
                               {{#each this.products}}
                               <span class="highlight">{{this.name}}<br>
@@ -164,7 +181,11 @@
                             </div>
                             <div class="col-md-6 text-right d-flex mr-auto" style="gap: 20px; justify-content:end">
                                <button class="primary-btn butbutton" data-toggle="modal" data-target="#hi{{this._id}}">Details</button>
-                               <button class="primary-btn butbutton">Cancel Order</button>
+                               {{#eq this.orderStatus "confirmed"}}
+                               <form action="/cancel-order/{{this._id}}" method="post">
+                               <button class="primary-btn butbutton" type="submit">Cancel Order</button>
+                               </form>
+                               {{/eq}}
                             </div>
                            </div>
                          {{/each}}
@@ -176,6 +197,7 @@
 <!-- Modal -->
 {{#each orders}}
 <div class="modal fade" id="hi{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       
@@ -203,9 +225,16 @@
                 <div>
                     Ordered Status:
                 </div>
-                <div class="highlight">
-                  Confirmed
-                </div>
+
+                        {{#eq this.orderStatus "confirmed"}}
+                        <div class="highlight" style="color: #d8d813;">{{this.orderStatus}}</div>
+                         {{/eq}}
+                        {{#eq this.orderStatus "delivered"}}
+                        <div class="highlight" style="color: rgba(15, 159, 32, 0.855);">{{this.orderStatus}}</div>
+                         {{/eq}}
+                        {{#eq this.orderStatus "cancelled"}}
+                        <div class="highlight" style="color: red;">{{this.orderStatus}}</div>
+                         {{/eq}}
             </div>
             <div class="col-6">
                 <div>
@@ -250,5 +279,6 @@
       </div>
     </div>
   </div>
+
 </div>
 {{/each}}

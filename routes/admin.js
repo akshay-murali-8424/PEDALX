@@ -41,7 +41,10 @@ router.route('/addProduct')
 .get(adminAuth.adminAuthentication,adminController.renderAddProduct)
 .post(adminAuth.adminAuthentication,upload.array('image',4), adminController.addProduct);
 
-router.get('/edit-product/:id',adminAuth.adminAuthentication,adminController.renderEditProduct);
+router.route('/edit-product/:id')
+.get(adminAuth.adminAuthentication,adminController.renderEditProduct)
+.post(adminAuth.adminAuthentication,upload.array('image',4),adminController.editProduct)
+
 
 //@desc admin category management
 router.get('/category',adminAuth.adminAuthentication,adminController.renderCategoryPage)
@@ -60,6 +63,12 @@ router.route('/addBrand')
 .get(adminAuth.adminAuthentication,adminController.renderAddBrand)
 //@desc admin category adding
 .post(adminAuth.adminAuthentication,adminController.addBrand)
+
+router.get('/user-management',adminAuth.adminAuthentication,adminController.renderUserManagement)
+
+router.get('/orders',adminAuth.adminAuthentication,adminController.renderOrdersPage)
+
+router.post('/change-order-status/:id',adminAuth.adminAuthentication,adminController.changeOrderStatus)
 
 
 module.exports = router;

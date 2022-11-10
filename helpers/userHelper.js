@@ -39,4 +39,50 @@ module.exports={
         const addresses=await getDb().collection('userData').find({_id:mongoDb.ObjectId(userId)}).project({addresses:1}).toArray()
         return addresses;
     }),
+
+    getAddressForCheckout:asyncHandler(async(userId,addressId)=>{
+        const addresses=await getDb().collection('userData').aggregate([
+            {
+                '$match': {
+                  '_id': mongoDb.ObjectId(userId)
+                }
+              }, {
+                '$unwind': {
+                  'path': '$addresses'
+                }
+              }, {
+                '$project': {
+                  '_id': 0, 
+                  'addresses': 1
+                }
+              }, {
+                '$match': {
+                  'addresses.id': mongoDb.ObjectId(addressId)
+                }
+              }
+          ]).toArray()
+          const address=addresses[0].addresses;
+          return address;
+    }),
+
+    updateUser:asyncHandler(async(userId,name,email,phoneno)=>{
+      await getDb().collection('userData').updateOne({_id:mongoDb.ObjectId(userId)},
+      {
+        $set:{name:name,email:email,phoneno:phoneno}
+      })
+    }),
+
+    changePassword:asyncHandler(async(userId,newPassword)=>{
+      
+      await getDb().collection('userData').updateOne({_id:mongoDb.ObjectId(userId)},
+      {
+        $set:{password:newPassword}
+      })
+    }),
+
+    findAll:asyncHandler(async()=>{
+      const users=await getDb().collection('userData').find().toArray();
+      return users;
+    })
+    
 }

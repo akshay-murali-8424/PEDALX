@@ -1,7 +1,6 @@
 const express = require('express');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
-const { userPermission } = require('../middlewares/userAuth');
 const userAuth = require('../middlewares/userAuth');
 const router = express.Router();
 
@@ -49,6 +48,9 @@ router.route('/checkout')
 .get(userAuth.userPermission,userController.renderCheckoutPage)
 .post(userAuth.userPermission,userController.placeOrder)
 
+
+router.post('/verify-payment',userAuth.addToCartPermission,userController.verifyPayment)
+
 router.post('/add-address',userAuth.userPermission,userController.addAddress)
 
 router.get('/wishlist',userAuth.userPermission,userController.renderWishlist)
@@ -62,5 +64,15 @@ router.get('/user-profile/:id',userAuth.userPermission,userController.renderUser
 router.get('/user-orders/:id',userAuth.userPermission,userController.renderUserOrders)
 
 router.get('/user-addresses/:id',userAuth.userPermission,userController.renderUserAddresses)
+
+router.patch('/edit-personal-info',userAuth.userPermission,userController.editPersonalInfo)
+
+router.patch('/change-password',userAuth.userPermission,userController.changePassword)
+
+router.post('/cancel-order/:id',userAuth.userPermission,userController.cancelOrder)
+
+router.get('/success',userAuth.userPermission,userController.paypalSuccess)
+
+router.get('/cancel',userController.paypalCancel)
 
 module.exports = router;

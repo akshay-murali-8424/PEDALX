@@ -1,0 +1,223 @@
+<style>
+    .cardz {
+        background-color: white;
+    }
+
+    .cardz:hover {
+        box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .card-ele {
+        text-align: center;
+    }
+
+    .highlight {
+        font-weight: 300;
+        color: black;
+    }
+
+    .caption {
+        font-size: small;
+    }
+</style>
+
+<div class="container-fluid position-relative d-flex p-0">
+    <!-- Spinner Start -->
+    <div id="spinner"
+        class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+    {{>adminSideBar}}
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+            <a href="/admin" class="navbar-brand d-flex d-lg-none me-4">
+                <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+            </a>
+            <a href="#" class="sidebar-toggler flex-shrink-0">
+                <i class="fa fa-bars"></i>
+            </a>
+        </nav>
+        <!-- Navbar End -->
+        <div class="container">
+            <!-- Button trigger modal -->
+
+
+            <!-- orders card-->
+            {{#each orders}}
+            <div class="cardz mt-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-1 card-ele">
+                        {{inc @index}}
+                    </div>
+                    <div class="col-lg-3 card-ele">
+                        <div class="caption">Product Name</div>
+                        <ul class="highlight">
+                            {{#each this.products}}
+                            <li>{{this.name}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    <div class="card-ele col-lg-3">
+                        <div class="caption">Order Status</div>
+                        {{#eq this.orderStatus "confirmed"}}
+                        <div class="highlight" style="color: #d8d813;">{{this.orderStatus}}</div>
+                         {{/eq}}
+                        {{#eq this.orderStatus "delivered"}}
+                        <div class="highlight" style="color: rgba(15, 159, 32, 0.855);">{{this.orderStatus}}</div>
+                         {{/eq}}
+                        {{#eq this.orderStatus "cancelled"}}
+                        <div class="highlight" style="color: red;">{{this.orderStatus}}</div>
+                         {{/eq}}
+                    </div>
+                    <div class="card-ele col-lg-3">
+                        <div class="caption">Total Amount</div>
+                        <div class="highlight">₹{{toLocaleString this.total}}</div>
+                    </div>
+                    <div class="card-ele col-lg-2">
+                        <div class="caption">Action</div>
+                        {{#eq this.orderStatus "confirmed"}}
+                        <div class="btn-primary mb-3 me-3" data-bs-toggle="modal"
+                            data-bs-target="#changeStatus{{@index}}">Change Status</div>
+                         {{/eq}}
+
+                        <div type="button" class="mb-3 me-3 btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal{{@index}}">
+                            Show Details
+                        </div>
+
+                        {{!-- modal for change status --}}
+                        <div class="modal fade" id="changeStatus{{@index}}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                        <form action="/admin/change-order-status/{{this._id}}" method="post">
+                                    <div class="modal-body mb-5">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="floatingSelect"
+                                                    aria-label="Floating label select example" name="orderStatus">
+                                                    <option selected="" value="confirmed">Confirmed</option>
+                                                    <option value="delivered">Delivered</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                </select>
+                                                <label for="floatingSelect">Select the status of the order</label>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Change</button>
+                                    </div>
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal for show detail -->
+                        <div class="modal fade" id="exampleModal{{@index}}" tabindex="-1"
+                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div>
+                                                    Ordered No:
+                                                </div>
+                                                <div class="highlight">
+                                                    {{this._id}}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>
+                                                    Ordered Date:
+                                                </div>
+                                                <div class="highlight">
+                                                    {{this.orderedTime}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-6">
+                                                <div>
+                                                    Ordered Status:
+                                                </div>
+                                                <div class="highlight">
+                                                    Confirmed
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div>
+                                                    Total amount
+                                                </div>
+                                                <div class="highlight">
+                                                    {{toLocaleString this.total}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="mt-3">Ordered Items</h3>
+                                        {{#each this.products}}
+                                        <div class="row mt-3" style="background-color: #f6f6f6;">
+                                            <div class="col-3">
+                                                <img src="{{this.images.[0]}}" style="width: 110px;">
+                                            </div>
+                                            <div class="col-3">
+                                                <ul>
+                                                    <li><span class="highlight">{{this.name}}</span> </li>
+                                                    <li><span class="highlight">₹{{toLocaleString this.price}}</span>
+                                                    </li>
+                                                    <li>quantity: <span class="highlight">{{this.quantity}}</span> </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        {{/each}}
+                                        <h3 class="mt-3">Billing and shipping details</h3>
+                                        <div class="col-6">
+                                            <ul>
+                                                <li><span class="highlight">Shipping Address</span></li>
+                                                <li>{{this.address.name}},</li>
+                                                <li>{{this.address.house}},</li>
+                                                <li>{{this.address.area}},</li>
+                                                <li>{{this.address.state}},</li>
+                                                <li>{{this.address.country}},</li>
+                                                <li>{{this.address.pincode}}</li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn-primary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+</div>

@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
-const { getDb } = require("../db");
 const AppError = require("../utils/appError");
 const asyncHandler = require("express-async-handler");
 const { promisify } = require("util");
-const bcrypt = require("bcryptjs");
 const categoryHelper = require("../helpers/categoryHelper");
 const brandHelper = require("../helpers/brandHelper");
 const cloudinary = require("../utils/cloudinary");
 const productHelper = require("../helpers/productHelper");
+const userHelper = require("../helpers/userHelper");
+const orderHelper = require("../helpers/orderHelper");
 
 module.exports = {
   // @desc render admin login page
@@ -78,7 +78,27 @@ module.exports = {
       categoryHelper.findAll(),
       brandHelper.findAll()
     ])
+    console.log(products);
     res.render('editProduct',{admin:true,products,categories,brands})
+  },
+
+  editProduct:async (req,res)=>{
+    try{
+      const productId=req.params.id;
+      console.log(req.body)
+      const {name,description,price,category,brand,stock}=req.body;
+      const images = await Promise.all(
+        req.files.map(async (file) => {
+          const {url} = await cloudinary.uploader.upload(file.path);
+          return url;
+        }))
+      const product=await productHelper.findProductForEdit(productId);
+      const newImages=[...product.images.slice(images.length),...images]
+      await productHelper.updateProduct(productId,name,description,price,category,brand,stock,newImages)
+      res.redirect('/admin/product');
+      }catch(err){
+        console.log(err);
+      }
   },
 
   renderCategoryPage: async (req, res) => {
@@ -114,5 +134,36 @@ module.exports = {
     await brandHelper.addBrand(name, description);
     res.redirect("/admin/brand");
   },
+  
+  renderUserManagement:async(req,res)=>{
+    try{
+      const usersClass="active";
+      const users=await userHelper.findAll();
+      console.log(users)
+      res.render("adminUserManagement",{admin:true,users,usersClass})
+    }catch(err){
+      console.log(err);
+    } 
+  },
 
+  renderOrdersPage:async(req,res)=>{
+   try{
+    const ordersClass="active";
+    const orders=await orderHelper.findAll()
+    res.render("adminOrders",{admin:true,ordersClass,orders})
+   }catch(err){
+    console.log(err)
+   }
+  },
+
+  changeOrderStatus:async(req,res)=>{
+    try{
+       const orderId=req.params.id;
+       const {orderStatus}=req.body;
+       await orderHelper.changeOrderStatus(orderId,orderStatus)
+       res.redirect('/admin/orders')
+    }catch(err){
+        console.log(err)
+    }
+  }
 };

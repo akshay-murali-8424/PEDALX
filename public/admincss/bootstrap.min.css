@@ -4,7 +4,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
-:root {
+ :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
@@ -54,7 +54,8 @@ body {
   font-weight: 400;
   line-height: 1.5;
   color: #6c7293;
-  background-color: #000;
+  
+background: linear-gradient(90deg, rgba(236,225,216,1) 0%, rgba(124,128,122,1) 100%);
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -203,11 +204,11 @@ sup {
   top: -0.5em;
 }
 a {
-  color: #eb1616;
+  color: #6174f0;
   text-decoration: none;
 }
 a:hover {
-  color: #bc1212;
+  color: #6174f0;
 }
 a:not([href]):not([class]),
 a:not([href]):not([class]):hover {
@@ -1818,7 +1819,7 @@ progress {
   font-weight: 400;
   line-height: 1.5;
   color: #6c7293;
-  background-color: #000;
+  background-color: rgba(221, 221, 221, 0.255);
   background-clip: padding-box;
   border: 1px solid #000;
   appearance: none;
@@ -1838,10 +1839,9 @@ progress {
 }
 .form-control:focus {
   color: #6c7293;
-  background-color: #000;
-  border-color: #f58b8b;
+  background-color: #fff;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(235, 22, 22, 0.25);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;;
 }
 .form-control::-webkit-date-and-time-value {
   height: 1.5em;
@@ -1860,7 +1860,7 @@ progress {
   margin: -0.375rem -0.75rem;
   margin-inline-end: 0.75rem;
   color: #6c7293;
-  background-color: #e9ecef;
+  background-color: #fff;
   pointer-events: none;
   border-color: inherit;
   border-style: solid;
@@ -1982,7 +1982,7 @@ textarea.form-control-lg {
   font-weight: 400;
   line-height: 1.5;
   color: #6c7293;
-  background-color: #000;
+  background-color: #fff;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
@@ -1992,9 +1992,8 @@ textarea.form-control-lg {
   appearance: none;
 }
 .form-select:focus {
-  border-color: #f58b8b;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(235, 22, 22, 0.25);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .form-select[multiple],
 .form-select[size]:not([size="1"]) {
@@ -2035,7 +2034,7 @@ textarea.form-control-lg {
   height: 1em;
   margin-top: 0.25em;
   vertical-align: top;
-  background-color: #000;
+  background-color: #fff;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -2547,20 +2546,20 @@ fieldset:disabled .btn {
 }
 .btn-primary {
   color: #fff;
-  background-color: #eb1616;
-  border-color: #eb1616;
+  background-color: #6174f0;
+  border-color: #6174f0;
+  cursor: pointer;
 }
 .btn-primary:hover {
-  color: #fff;
-  background-color: #c81313;
-  border-color: #bc1212;
+  
+  opacity: 1;
 }
 .btn-check:focus + .btn-primary,
 .btn-primary:focus {
   color: #fff;
-  background-color: #c81313;
-  border-color: #bc1212;
-  box-shadow: 0 0 0 0.25rem rgba(238, 57, 57, 0.5);
+  background-color: #6174f0;
+  border-color: #6174f0;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .btn-check:checked + .btn-primary,
 .btn-check:active + .btn-primary,
@@ -2568,8 +2567,8 @@ fieldset:disabled .btn {
 .btn-primary.active,
 .show > .btn-primary.dropdown-toggle {
   color: #fff;
-  background-color: #bc1212;
-  border-color: #b01111;
+  background-color: #6174f0;
+  border-color: #6174f0;
 }
 .btn-check:checked + .btn-primary:focus,
 .btn-check:active + .btn-primary:focus,
@@ -6785,7 +6784,7 @@ fieldset:disabled .btn {
   word-break: break-word !important;
 }
 .text-primary {
-  color: #eb1616 !important;
+  color: #6174f0 !important;
 }
 .text-secondary {
   color: #191c24 !important;
@@ -6830,7 +6829,7 @@ fieldset:disabled .btn {
   background-color: #eb1616 !important;
 }
 .bg-secondary {
-  background-color: #191c24 !important;
+  background-color: #fff !important;
 }
 .bg-success {
   background-color: #198754 !important;

@@ -39,7 +39,8 @@
                                             <img src={{this.productDetails.images.[0]}} width="100px">
                                         </div>
                                         <div class="media-body">
-                                            <p>{{this.productDetails.name}}</p>
+                                            <div class="highlight">{{this.productDetails.name}}</div>
+                                            <br><div>Stocks left: <span class="highlight" id="stock{{this.productDetails._id}}">{{this.productDetails.stock}}</span> </p>
                                         </div>
                                     </div>
                                 </td>
@@ -97,6 +98,7 @@
                                         <a class="gray_btn" href="/">Continue Shopping</a>
                                         <a class="primary-btn checkout-button" href="/checkout">Proceed to checkout</a>
                                     </div>
+    
                 </div>
             </div>
         </div>
@@ -117,13 +119,32 @@
         display: flex;
         justify-content: center;
     }
+    .highlight{
+        color: black;
+        font-weight: 500;
+    }
 </style>
 
 <script>
   
+  
+
+  
   const changeQuantity=async (cartId,productId,count,price)=>{
+    const stock = parseInt(document.getElementById(`stock${productId}`).textContent)
     const price1=parseInt(price)
     const quantity=parseInt(document.getElementById(productId).textContent)
+    if(quantity>=stock&&count===1){
+      Toastify({
+                text: "there is not enough stock for that",
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+	}).showToast();
+    }else{
     try {
       const res = await axios({
         method: 'POST', url: '/change-product-quantity', data: {cartId,productId,count}
@@ -145,5 +166,6 @@
 	   console.log(err);
       }
     }
+  }
 
 </script>

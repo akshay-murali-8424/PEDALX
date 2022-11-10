@@ -64,7 +64,7 @@ module.exports = {
       });
       res.cookie("userjwt", token, {
         httpOnly: true,
-        sameSite: true,
+        sameSite: "lax",
         secure: false,
         maxAge: 24 * 60 * 60 * 1000,
       });
@@ -94,7 +94,7 @@ module.exports = {
         });
         res.cookie("userjwt", token, {
           httpOnly: true,
-          sameSite: true,
+          sameSite: "lax",
           secure: false,
           maxAge: 24 * 60 * 60 * 1000,
         });
@@ -164,7 +164,7 @@ module.exports = {
         });
         res.cookie("userjwt", token, {
           httpOnly: true,
-          sameSite: true,
+          sameSite: "lax",
           secure: false,
           maxAge: 24 * 60 * 60 * 1000,
         });

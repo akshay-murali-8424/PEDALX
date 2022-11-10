@@ -1,3 +1,15 @@
+<style>
+	.outOfStock{
+		    background-color: #808080;
+    position: relative;
+    top: -118px;
+    width: 159px;
+    text-align: center;
+    
+    color: black;
+	}
+</style>
+
 <!-- Start Banner Area -->
 <section class="banner-area organic-breadcrumb">
 	<div class="container">
@@ -95,13 +107,16 @@
 							<a href="/view-product/{{this._id}}">
 								<img class="img-fluid" src={{this.images.[0]}} width="160px">
 							</a>
+							{{#eq this.stock 0}}
+							<div class="outOfStock">Out of Stock</div>
+							{{/eq}}
 							<div class="product-details">
 								<a href="/view-product/{{this._id}}">
 									<h6>{{this.name}}</h6>
 								</a>
 								<div class="price">
 									<h6>₹{{this.price}}</h6>
-									<h6 class="l-through">₹210.00</h6>
+									<h6 class="l-through">₹210000.00</h6>
 								</div>
 								<div class="prd-bottom">
 

@@ -11,6 +11,7 @@ module.exports = {
         req.cookies.userjwt,
         process.env.JWT_SECRET
       );
+      console.log({isLoggedIn});
       if(isLoggedIn){
         const userData=await userHelper.findUserForToken(isLoggedIn.userId);
         req.user=userData;

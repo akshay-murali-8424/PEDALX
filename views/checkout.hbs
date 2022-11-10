@@ -66,29 +66,29 @@
                 <div class="check"></div>
               </div>
             </div>
-            <div class="alert alert-danger d-none payment-alert" role="alert">
-              Please select an payment method to place order
-            </div>
-            {{!-- <div class="payment_item active">
+            <div class="payment_item active">
               <div class="radion_btn">
-                <input type="radio" id="f-option6" name="selector">
-                <label for="f-option6">Paypal </label>
-                <img src="img/product/card.jpg" alt="">
+                <input type="radio" id="f-option6" name="payment-option" value="razorpay">
+                <label for="f-option6">Razorpay</label>
                 <div class="check"></div>
               </div>
 
             </div>
             <div class="payment_item ">
               <div class="radion_btn">
-                <input type="radio" id="f" name="selector">
+                <input type="radio" id="f" name="payment-option" value="paypal">
                 <label for="f">Paypal </label>
-                <img src="img/product/card.jpg" alt="">
+        
                 <div class="check"></div>
               </div>
 
-            </div> --}}
+            </div>
 
+            <div class="alert alert-danger d-none payment-alert" role="alert">
+              Please select an payment method to place order
+            </div>
             <a class="primary-btn" id="proceed">Place Order</a>
+            
           </div>
         </div>
       </div>
@@ -157,36 +157,6 @@
   }
 </style>
 
-<script src="/validations/addAddress.js"></script>
+<script src="/validations/checkout.js"></script>
 
-<script>
-   	const placeOrder = async (addressId,paymentMethod) => {
-		try {
-			const res = await axios({
-				method: 'POST', url: '/checkout', data: {addressId,paymentMethod}
-			})
-      location.assign('/')
-		}
-		catch (err) {
-       console.log(err)
-		}
-	}
-  
-
-  document.getElementById('proceed').addEventListener('click', e => {
-    e.preventDefault();
-    if (!document.querySelector('input[name="address"]:checked')) {
-      document.querySelector('.address-alert').classList.remove('d-none')
-      return
-    } 
-     if (!document.querySelector('input[name="payment-option"]:checked')) {
-      document.querySelector('.payment-alert').classList.remove('d-none')
-      return
-    } 
-    const addressId=document.querySelector('input[name="address"]:checked').value;
-    const paymentMethod=document.querySelector('input[name="payment-option"]:checked').value;
-    placeOrder(addressId,paymentMethod);
-    
-  })
-
-</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
