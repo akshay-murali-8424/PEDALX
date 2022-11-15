@@ -8,7 +8,17 @@
     
     color: black;
 	}
+
+	.sidebar-filter .head {
+    line-height: 60px;
+    background: #828bb3;
+    padding: 0 30px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+}
 </style>
+
 
 <!-- Start Banner Area -->
 <section class="banner-area organic-breadcrumb">
@@ -31,27 +41,24 @@
 			<div class="sidebar-categories">
 				<div class="head">Browse Categories</div>
 				<ul class="main-categories">
-					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>MOUNTAIN</a>
+				 {{#each categories}}
+					<li class="main-nav-list"><a href="/cycles?categoryId={{this._id}}"><span class="lnr lnr-arrow-right"></span>{{this.name}}</a>
 					</li>
-					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>HYBRID</a>
-					</li>
-					<li class="main-nav-list"><a href="#"><span class="lnr lnr-arrow-right"></span>ROAD</a>
-					</li>
+					
+                 {{/each}}
 				</ul>
 			</div>
 			<div class="sidebar-filter mt-50">
-				<div class="top-filter-head">Product Filters</div>
-				<div class="common-filter">
-					<div class="head">Brands</div>
-					<form action="#">
-						<ul>
-							<li class="filter-list"><input class="pixel-radio" type="radio" id="apple"
-									name="brand"><label for="apple">Cannondale<span>(29)</span></label></li>
-							<li class="filter-list"><input class="pixel-radio" type="radio" id="asus"
-									name="brand"><label for="asus">Scott<span>(29)</span></label></li>
-						</ul>
-					</form>
-				</div>
+				<div class="sidebar-categories">
+				<div class="head">Browse Brands</div>
+				<ul class="main-categories">
+				 {{#each brands}}
+					<li class="main-nav-list"><a href="/cycles?brandId={{this._id}}"><span class="lnr lnr-arrow-right"></span>{{this.name}}</a>
+					</li>
+					
+                 {{/each}}
+				</ul>
+			</div>
 
 				<div class="common-filter">
 					<div class="head">Price</div>
@@ -73,26 +80,29 @@
 			<!-- Start Filter Bar -->
 			<div class="filter-bar d-flex flex-wrap align-items-center">
 				<div class="sorting">
-					<select>
-						<option value="1">Default sorting</option>
-						<option value="1">Default sorting</option>
-						<option value="1">Default sorting</option>
+					<select onchange="sort()" id="sortSelectBox">
+						{{#if isSort}}
+						<option value="1">Price Low to High</option>
+						<option value="-1">Price High to Low</option>
+						{{else}}
+						<option value="-1">Price High to Low</option>
+						<option value="1">Price Low to High</option>
+						{{/if}}
 					</select>
 				</div>
 				<div class="sorting mr-auto">
-					<select>
+					{{!-- <select>
 						<option value="1">Show 12</option>
 						<option value="1">Show 12</option>
 						<option value="1">Show 12</option>
-					</select>
+					</select> --}}
 				</div>
 				<div class="pagination">
 					<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
 					<a href="#" class="active">1</a>
 					<a href="#">2</a>
 					<a href="#">3</a>
-					<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-					<a href="#">6</a>
+					<a href="#">4</a>
 					<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
 				</div>
 			</div>
@@ -115,7 +125,7 @@
 									<h6>{{this.name}}</h6>
 								</a>
 								<div class="price">
-									<h6>₹{{this.price}}</h6>
+									<h6>₹{{toLocaleString this.price}}</h6>
 									<h6 class="l-through">₹210000.00</h6>
 								</div>
 								<div class="prd-bottom">
@@ -143,19 +153,18 @@
 			<!-- Start Filter Bar -->
 			<div class="filter-bar d-flex flex-wrap align-items-center">
 				<div class="sorting mr-auto">
-					<select>
+					{{!-- <select>
 						<option value="1">Show 12</option>
 						<option value="1">Show 12</option>
 						<option value="1">Show 12</option>
-					</select>
+					</select> --}}
 				</div>
 				<div class="pagination">
 					<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
 					<a href="#" class="active">1</a>
 					<a href="#">2</a>
 					<a href="#">3</a>
-					<a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
-					<a href="#">6</a>
+					<a href="#">4</a>
 					<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
 				</div>
 			</div>
@@ -163,6 +172,25 @@
 		</div>
 	</div>
 </div>
+
+
+<script>
+function sort() {
+    
+    const selectBox = document.getElementById("sortSelectBox");
+    const selectedValue = selectBox.options[selectBox.selectedIndex].value;
+    
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    params.set('sort', selectedValue);
+    let newParams = params.toString();
+    
+    
+    
+   location.href = window.location.protocol + "//" + window.location.host + '/cycles?' + newParams;
+  }
+
+</script>
 
 <script>
 	const addToCart = async (productId) => {
@@ -244,4 +272,8 @@
 	        addToWishlist(this.dataset.product);
 		});
 	})
+
+
+
+
 </script>

@@ -1,108 +1,3 @@
-
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Hello {{userDetail.name}}</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="/wishlist">Profile</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- End Banner Area -->
-
-<div class="container-xl px-4 mt-4">
-    <!-- Account page navigation-->
-    <nav class="nav nav-borders">
-         <a class="nav-link" href="/user-profile/{{userDetail._id}}">Profile</a>
-        <a class="nav-link" href="/user-orders/{{userDetail._id}}" >Orders</a>
-        <a class="nav-link active" href="/user-addresses/{{userDetail._id}}"
-            >Addresses</a>
-    </nav>
-    <hr class="mt-0 mb-4">
-        <button class="primary-btn add-address-btn mt-3 mb-5" data-toggle="modal" data-target="#exampleModalCenter" style="margin-left: 9rem;">Add new
-            address</button>
-    <div class="row cardsss mb-5">
-        {{#each addresses.addresses}}
-        <div class="col-3" style="background-color: #f6f6f6;">
-            <div>
-        <div style="background-color: #f6f6f6; position:absolute; right:1%;">
-            <i class="fas fa-edit" style="cursor: pointer;"></i>
-            <br>
-            <i class="fas fa-trash" style="cursor: pointer;"></i> 
-            </div>
-            <ul>
-             <li>{{this.name}},</li>
-            <li>{{this.house}},</li>
-            <li>{{this.area}},</li>
-            <li>{{this.state}},</li>
-            <li>{{this.country}},</li>
-            <li>{{this.pincode}}</li>
-            </ul>
-            </div>
-        </div>
-        {{/each}}
-        
-    </div>
-    
-</div>
-
-
-{{!-- add address modal --}}
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Add new address</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="alert alert-danger d-none" role="alert">
-        </div>
-        <form id="add-address">
-          <div class="form-group">
-            <label for="exampleInputEmail1">Name</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="name" id="name">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Flat, House no., Building, Company, Apartment</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="house" id="house">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Area, Street, Sector, Village</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="area" id="area">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Town/City</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="city" id="city">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">State</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="state" id="state">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Country</label>
-            <input type="text" class="form-control" aria-describedby="emailHelp" name="country" id="country">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Pincode</label>
-            <input type="number" class="form-control" aria-describedby="emailHelp" name="pincode" id="pincode">
-          </div>
-
-          <button type="submit" class="primary-btn add-address-btn">Add</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
 <style>
     .img-account-profile {
     height: 10rem;
@@ -165,10 +60,12 @@
 .cardsss{
     margin-right: auto;
     margin-left: auto;
-    width: 80%;
+    width: 40%;
     line-height: 22px;
-    display: flex;
-    gap: 22px;
+    background-color: #f1f3f6;
+    color: black;
+    font-weight: 400;
+    
 }
 .li{
     text-decoration: none;
@@ -181,6 +78,252 @@
     line-height: normal;
   }
 
+.editbtn{
+      color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+}
+.deletebtn{
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+}
+.deletebtn a{
+  color: red !important;
+}
 </style>
 
-<script src="/validations/addAddress.js"></script>
+
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>Hello {{userDetail.name}}</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="">Addresses</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+<div class="container-xl px-4 mt-4">
+    <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+         <a class="nav-link" href="/user-profile/{{userDetail._id}}">Profile</a>
+        <a class="nav-link" href="/user-orders/{{userDetail._id}}" >Orders</a>
+        <a class="nav-link active" href="/user-addresses/{{userDetail._id}}"
+            >Addresses</a>
+        <a class="nav-link" href="/user-wallet/{{userDetail._id}}"
+            >Wallet</a>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="d-flex justify-content-center">
+        <button class="primary-btn add-address-btn mt-3 mb-5" data-toggle="modal" data-target="#exampleModalCenter">Add new
+            address</button>
+      </div>
+ {{#each addresses.addresses}}
+    <div class="cardsss mb-5">
+       <div class="row">
+        <div class="col-6 mt-2" style="left: 9px;">{{this.name}}</div>
+        <div class="col-6 editbtn mt-2" style="text-align: end; left: -11px;" data-toggle="modal" data-target="#hi{{inc @index}}">Edit</div>
+       </div>
+       <div class="p-2 row">
+        <div class="col-6">{{this.house}}, {{this.area}}, {{this.city}}, {{this.state}}, {{this.country}}<br>
+        {{this.pincode}}</div>
+        <div class="col-6 deletebtn" style="text-align: end;"><a href="/delete-address/{{this.id}}">Delete</a></div>
+       </div>
+    </div>
+    
+    {{!-- edit modal  --}}
+    <div class="modal fade" id="hi{{inc @index}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Edit address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger d-none" role="alert">
+        </div>
+        <form method="post" action="/edit-address/{{this.id}}">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Name</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="name" value="{{this.name}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Flat, House no., Building, Company, Apartment</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="house" value="{{this.house}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Area, Street, Sector, Village</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="area"  value="{{this.area}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Town/City</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="city" value="{{this.city}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">State</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="state" value="{{this.state}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Country</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="country" value="{{this.country}}">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Pincode</label>
+            <input type="number" class="form-control" aria-describedby="emailHelp" name="pincode" value="{{this.pincode}}">
+          </div>
+
+          <button type="submit" class="primary-btn add-address-btn">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    {{/each}}
+    
+</div>
+
+
+{{!-- add address modal --}}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Add new address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger d-none" role="alert">
+        </div>
+        <form id="add-address" autocomplete="off">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Name</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="name" id="name">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Flat, House no., Building, Company, Apartment</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="house" id="house">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Area, Street, Sector, Village</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="area" id="area">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Town/City</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="city" id="city">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">State</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="state" id="state">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Country</label>
+            <input type="text" class="form-control" aria-describedby="emailHelp" name="country" id="country">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Pincode</label>
+            <input type="number" class="form-control" aria-describedby="emailHelp" name="pincode" id="pincode">
+          </div>
+
+          <button type="submit" class="primary-btn add-address-btn">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  const addNewAddress = async (name, house, area, city ,state, country, pincode) => {
+  try {
+    console.log(name, house, area, city ,state, country, pincode)
+    const res = await axios({
+      method: "POST", url: "/add-address", data: { name, house, area, city ,state, country, pincode }
+    })
+    location.reload()
+  } catch (err) {
+    document.querySelector('.alert').classList.remove('d-none')
+  }
+}
+
+
+$(document).ready(function () {
+  $("#add-address").validate({
+    errorClass: 'errors',
+    rules: {
+      name: {
+        required: true,
+      },
+      house: {
+        required: true,
+      },
+      city: {
+        required: true,
+      },
+      area: {
+        required: true,
+      },
+      state: {
+        required: true,
+      },
+      country: {
+        required: true,
+      },
+      pincode: {
+        required: true,
+      },
+    },
+    messages: {
+
+      name: {
+        required: "field required",
+      },
+      house: {
+        required: "field required",
+      },
+      city: {
+        required: "field required",
+      },
+      area: {
+        required: "field required",
+      },
+      state: {
+        required: "field required",
+      },
+      country: {
+        required: "field required",
+      },
+      pincode: {
+        required: "field required",
+      },
+    },
+    submitHandler: function () {
+      const name = document.getElementById('name').value;
+      const house = document.getElementById('house').value;
+      const area = document.getElementById('area').value;
+      const city = document.getElementById('city').value;
+      const state = document.getElementById('state').value;
+      const country = document.getElementById('country').value;
+      const pincode = document.getElementById('pincode').value;
+      addNewAddress(name, house, area, city,state, country, pincode);
+    }
+  });
+});
+</script>

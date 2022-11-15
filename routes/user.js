@@ -51,6 +51,8 @@ router.route('/checkout')
 
 router.post('/verify-payment',userAuth.addToCartPermission,userController.verifyPayment)
 
+router.get('/success-order',userAuth.userPermission,userController.renderSuccessOrder)
+
 router.post('/add-address',userAuth.userPermission,userController.addAddress)
 
 router.get('/wishlist',userAuth.userPermission,userController.renderWishlist)
@@ -61,15 +63,27 @@ router.get('/remove-from-wishlist/:id',userAuth.addToCartPermission,userControll
 
 router.get('/user-profile/:id',userAuth.userPermission,userController.renderUserProfile)
 
-router.get('/user-orders/:id',userAuth.userPermission,userController.renderUserOrders)
-
-router.get('/user-addresses/:id',userAuth.userPermission,userController.renderUserAddresses)
-
 router.patch('/edit-personal-info',userAuth.userPermission,userController.editPersonalInfo)
 
 router.patch('/change-password',userAuth.userPermission,userController.changePassword)
 
+router.get('/user-orders/:id',userAuth.userPermission,userController.renderUserOrders)
+
 router.post('/cancel-order/:id',userAuth.userPermission,userController.cancelOrder)
+
+router.get('/return-order/:id',userAuth.userPermission,userController.returnOrder)
+
+router.get('/user-addresses/:id',userAuth.userPermission,userController.renderUserAddresses)
+
+router.post('/edit-address/:id',userAuth.userPermission,userController.editAddress)
+
+router.get('/delete-address/:id',userAuth.userPermission,userController.deleteAddress)
+
+router.get('/user-wallet/:id',userAuth.userPermission,userController.renderUserWallet)
+
+router.post('/add-money-to-wallet',userAuth.userPermission,userController.addMoneyToWallet)
+
+router.post('/verify-add-money-to-wallet',userAuth.userPermission,userController.verifyAddMoneyToWallet)
 
 router.get('/success',userAuth.userPermission,userController.paypalSuccess)
 

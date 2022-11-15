@@ -1,9 +1,9 @@
 
 
-const addNewAddress = async (name, house, area, state, country, pincode) => {
+const addNewAddress = async (name, house, area, city,state, country, pincode) => {
   try {
     const res = await axios({
-      method: "POST", url: "/add-address", data: { name, house, area, state, country, pincode }
+      method: "POST", url: "/add-address", data: { name, house, area, city, state, country, pincode }
     })
     location.reload()
   } catch (err) {
@@ -27,6 +27,9 @@ $(document).ready(function () {
       },
       area: {
         required: true,
+      },
+      city:{
+       required:true,
       },
       state: {
         required: true,
@@ -66,10 +69,11 @@ $(document).ready(function () {
       const name = document.getElementById('name').value;
       const house = document.getElementById('house').value;
       const area = document.getElementById('area').value;
+      const city = document.getElementById('city').value;
       const state = document.getElementById('state').value;
       const country = document.getElementById('country').value;
       const pincode = document.getElementById('pincode').value;
-      addNewAddress(name, house, area, state, country, pincode);
+      addNewAddress(name, house, area, city,state, country, pincode);
     }
   });
 });
@@ -80,7 +84,7 @@ $(document).ready(function () {
         method: 'POST', url: '/verify-payment', data: { razorResponse,orderId }
       })
       console.log("payment Successfull")
-      location.assign('/')
+      location.assign('/success-order')
     }catch(err){
       console.log(err)
       Toastify({
@@ -105,8 +109,8 @@ $(document).ready(function () {
       const res = await axios({
         method: 'POST', url: '/checkout', data: { addressId, paymentMethod }
       })
-      if (paymentMethod === "cod") {
-        location.assign('/')
+      if (paymentMethod === "cod"||paymentMethod==="wallet") {
+        location.assign('/success-order')
       } else if (paymentMethod === "razorpay") {
 
         const options = {
@@ -153,7 +157,8 @@ $(document).ready(function () {
       }).showToast();
     }
   }
-
+  
+  
 
   document.getElementById('proceed').addEventListener('click', e => {
     e.preventDefault();

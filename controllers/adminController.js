@@ -2,12 +2,12 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../utils/appError");
 const asyncHandler = require("express-async-handler");
 const { promisify } = require("util");
-const categoryHelper = require("../helpers/categoryHelper");
-const brandHelper = require("../helpers/brandHelper");
+const categoryService = require("../services/categoryService");
+const brandService = require("../services/brandService");
 const cloudinary = require("../utils/cloudinary");
-const productHelper = require("../helpers/productHelper");
-const userHelper = require("../helpers/userHelper");
-const orderHelper = require("../helpers/orderHelper");
+const productService = require("../services/productService");
+const userService = require("../services/userService");
+const orderService = require("../services/orderService");
 
 module.exports = {
   // @desc render admin login page
@@ -39,15 +39,15 @@ module.exports = {
   // @route /product GET
   renderProductPage: async(req, res) => {
     const productClass="active";
-    const products=await productHelper.findAll();
+    const products=await productService.findAll();
     res.render("adminProduct", { admin: true ,products,productClass});
   },
 
   renderAddProduct: async (req, res) => {
     const productClass="active";
     const [categories,brands] = await Promise.all([
-      categoryHelper.findAll(),
-      brandHelper.findAll()
+      categoryService.findAll(),
+      brandService.findAll()
     ])
     const error=req.query.error;
     req.query.error=null;
@@ -63,7 +63,7 @@ module.exports = {
           return url;
         })
         )
-        await productHelper.addProduct(name,description,price,category,brand,stock,images);
+        await productService.addProduct(name,description,price,category,brand,stock,images);
         res.redirect('/admin/product')
       }
       catch(err){
@@ -74,9 +74,9 @@ module.exports = {
   renderEditProduct:async(req,res)=>{
     const productId=req.params.id
     const [products,categories,brands]=await Promise.all([
-      productHelper.findProduct(productId),
-      categoryHelper.findAll(),
-      brandHelper.findAll()
+      productService.findProduct(productId),
+      categoryService.findAll(),
+      brandService.findAll()
     ])
     console.log(products);
     res.render('editProduct',{admin:true,products,categories,brands})
@@ -92,9 +92,9 @@ module.exports = {
           const {url} = await cloudinary.uploader.upload(file.path);
           return url;
         }))
-      const product=await productHelper.findProductForEdit(productId);
+      const product=await productService.findProductForEdit(productId);
       const newImages=[...product.images.slice(images.length),...images]
-      await productHelper.updateProduct(productId,name,description,price,category,brand,stock,newImages)
+      await productService.updateProduct(productId,name,description,price,category,brand,stock,newImages)
       res.redirect('/admin/product');
       }catch(err){
         console.log(err);
@@ -103,7 +103,7 @@ module.exports = {
 
   renderCategoryPage: async (req, res) => {
     const categoryClass="active";
-    const categories = await categoryHelper.findAll();
+    const categories = await categoryService.findAll();
     res.render("adminCategory", { admin: true, categories, categoryClass});
   },
 
@@ -114,13 +114,20 @@ module.exports = {
 
   addCategory: async (req, res) => {
     const { name, description } = req.body;
-    await categoryHelper.addCategory(name, description);
+    await categoryService.addCategory(name, description);
     res.redirect("/admin/category");
+  },
+
+  editCategory:async(req,res)=>{
+    const categoryId=req.params.id;
+    const {name,description}=req.body;
+    await categoryService.editCategory(categoryId,name,description);
+    res.redirect('/admin/category')
   },
 
   renderBrandPage: async (req, res) => {
     const brandClass="active";
-    const brands = await brandHelper.findAll();
+    const brands = await brandService.findAll();
     res.render("adminBrand", { admin: true, brands, brandClass});
   },
 
@@ -131,14 +138,21 @@ module.exports = {
 
   addBrand: async (req, res) => {
     const { name, description } = req.body;
-    await brandHelper.addBrand(name, description);
+    await brandService.addBrand(name, description);
     res.redirect("/admin/brand");
+  },
+
+  editBrand:async(req,res)=>{
+    const brandId=req.params.id;
+    const {name,description}=req.body;
+    await brandService.editBrand(brandId,name,description);
+    res.redirect('/admin/brand')
   },
   
   renderUserManagement:async(req,res)=>{
     try{
       const usersClass="active";
-      const users=await userHelper.findAll();
+      const users=await userService.findAll();
       console.log(users)
       res.render("adminUserManagement",{admin:true,users,usersClass})
     }catch(err){
@@ -149,7 +163,7 @@ module.exports = {
   renderOrdersPage:async(req,res)=>{
    try{
     const ordersClass="active";
-    const orders=await orderHelper.findAll()
+    const orders=await orderService.findAll()
     res.render("adminOrders",{admin:true,ordersClass,orders})
    }catch(err){
     console.log(err)
@@ -160,10 +174,20 @@ module.exports = {
     try{
        const orderId=req.params.id;
        const {orderStatus}=req.body;
-       await orderHelper.changeOrderStatus(orderId,orderStatus)
+       await orderService.changeOrderStatus(orderId,orderStatus)
        res.redirect('/admin/orders')
     }catch(err){
         console.log(err)
+    }
+  },
+
+  changeUserStatus:async(req,res)=>{
+    try{
+       const userId=req.params.id;
+       await userService.changeUserStatus(userId);
+       res.redirect('/admin/user-management');
+    }catch(err){
+      console.log(err)
     }
   }
 };

@@ -19,18 +19,18 @@
               <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                 aria-expanded="false">CATEGORIES</a>
               <ul class="dropdown-menu">
-                <li class="nav-item"><a class="nav-link" href="category.html">MOUNTAIN BIKE</a></li>
-                <li class="nav-item"><a class="nav-link" href="single-product.html">ROAD BIKE</a></li>
-                <li class="nav-item"><a class="nav-link" href="checkout.html">HYBRID BIKE</a></li>
+                {{#each categories}}
+                <li class="nav-item"><a class="nav-link" href="/cycles?categoryId={{this._id}}">{{this.name}}</a></li>
+                {{/each}}
               </ul>
             </li>
             <li class="nav-item submenu dropdown">
               <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                 aria-expanded="false">BRANDS</a>
               <ul class="dropdown-menu">
-                <li class="nav-item"><a class="nav-link" href="blog.html">CANNONDALE</a></li>
-                <li class="nav-item"><a class="nav-link" href="single-blog.html">SANTA CRUZ</a></li>
-                <li class="nav-item"><a class="nav-link" href="single-blog.html">SCOTT</a></li>
+                {{#each brands}}
+                <li class="nav-item"><a class="nav-link" href="blog.html">{{this.name}}</a></li>
+                 {{/each}}
               </ul>
             </li>
             <li class="nav-item submenu dropdown">
@@ -60,7 +60,7 @@
   </div>
   <div class="search_input" id="search_input_box">
     <div class="container">
-      <form class="d-flex justify-content-between">
+      <form class="d-flex justify-content-between" autocomplete="off">
         <input type="text" class="form-control" id="search_input" placeholder="Search Here" />
         <button type="submit" class="btn"></button>
         <span class="lnr lnr-cross" id="close_search" title="Close Search"></span>

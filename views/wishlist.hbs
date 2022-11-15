@@ -1,48 +1,5 @@
 
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Wishlist</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="/wishlist">Wishlist</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- End Banner Area -->
-
-   {{#if isEmpty}}
-    <div class='container-fluid d-flex row'>
-        {{#each wishlist.productDetails}}
-        <div class="card mx-auto col-lg-2 mt-5 mb-5">
-            <div class="removeFromWishlist" data-product="{{this._id}}"><i class="fas fa-times-circle" style="cursor: pointer;"></i></div>
-            <img class='mx-auto img-thumbnail'
-                src="{{this.images.[0]}}"
-                width="auto" height="auto"/>
-            <div class="card-body text-center mx-auto">
-                <div class='cvp'>
-                    <h5 class="card-title font-weight-bold">{{this.name}}</h5>
-                    <p class="card-text">₹{{this.price}}</p>
-                    <a href="/view-product/{{this._id}}" class="btn details px-auto">view details</a><br />
-                    <div class="btn carts px-auto addToCart" data-product="{{this._id}}">ADD TO CART</div>
-                </div>
-            </div>
-        </div>
-        {{/each}}
-    </div>
-    {{else}}
-    <div class="emptycart">
-    <img src="/img/emptycart.jpg" style="width: 500px;">
-    </div>
-    {{/if}}
-
-
-
-    <style>
+<style>
       .details {
             border: 1.5px solid grey;
             color: #212121;
@@ -97,42 +54,54 @@
         
 
     </style>
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>Wishlist</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="/wishlist">Wishlist</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+   {{#if isEmpty}}
+    <div class='container-fluid d-flex row'>
+        {{#each wishlist.productDetails}}
+        <div class="card mx-auto col-lg-2 mt-5 mb-5">
+            <div class="removeFromWishlist" data-product="{{this._id}}"><i class="fas fa-times-circle" style="cursor: pointer;"></i></div>
+            <img class='mx-auto img-thumbnail'
+                src="{{this.images.[0]}}"
+                width="auto" height="auto"/>
+            <div class="card-body text-center mx-auto">
+                <div class='cvp'>
+                    <h5 class="card-title font-weight-bold">{{this.name}}</h5>
+                    <p class="card-text">₹{{this.price}}</p>
+                    <a href="/view-product/{{this._id}}" class="btn details px-auto">view details</a><br />
+                    <div class="btn carts px-auto addToCart" data-product="{{this._id}}">ADD TO CART</div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+    <div class="emptycart">
+    <img src="/img/emptycart.jpg" style="width: 500px;">
+    </div>
+    {{/if}}
+
+
+
+   
 
 
 <script>
-   
-	const addToCart = async (productId) => {
-		try {
-			const res = await axios({
-				method: 'GET', url: `/add-to-cart/${productId}`
-			})
-			if(res.data.status==="success"){
-			Toastify({
-                text: res.data.message,
-                duration: 3000,
-				gravity: "bottom",
-                position: "center",
-				 style: {
-                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
-                  },
-			}).showToast();
-            }else{
-				Toastify({
-                text: res.data.message,
-                duration: 3000,
-				gravity: "bottom",
-                position: "center",
-				 style: {
-                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
-                  },
-			}).showToast();
-			location.assign('/login')
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
-	const removeFromWishlist = async (productId) => {
+    	const removeFromWishlist = async (productId) => {
 		try {
 			const res = await axios({
 				method: 'GET', url: `/remove-from-wishlist/${productId}`
@@ -153,6 +122,40 @@
 			console.log(err);
 		}
 	}
+   
+	const addToCart = async (productId) => {
+		try {
+			const res = await axios({
+				method: 'GET', url: `/add-to-cart/${productId}`
+			})
+			if(res.data.status==="success"){
+			Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+            removeFromWishlist(productId);
+            }else{
+				Toastify({
+                text: res.data.message,
+                duration: 3000,
+				gravity: "bottom",
+                position: "center",
+				 style: {
+                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                  },
+			}).showToast();
+			location.assign('/login')
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 
 
 	document.querySelectorAll('.addToCart').forEach(item => {

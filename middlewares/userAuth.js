@@ -1,7 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-const userHelper = require("../helpers/userHelper");
+const brandHelper = require("../services/brandService");
+const categoryHelper = require("../services/categoryService");
+const userHelper = require("../services/userService");
 
 module.exports = {
   userPermission: async (req, res, next) => {
@@ -11,7 +13,6 @@ module.exports = {
         req.cookies.userjwt,
         process.env.JWT_SECRET
       );
-      console.log({isLoggedIn});
       if(isLoggedIn){
         const userData=await userHelper.findUserForToken(isLoggedIn.userId);
         req.user=userData;
@@ -30,6 +31,12 @@ module.exports = {
 
   isUserLoggedIn:async (req,res,next)=>{
     try{
+      const [categories,brands] = await Promise.all([
+        categoryHelper.findAll(),
+        brandHelper.findAll()
+      ])
+      res.locals.categories=categories;
+      res.locals.brands=brands;
       if(req.cookies.userjwt){
         const isLoggedIn = await promisify(jwt.verify)(
           req.cookies.userjwt,

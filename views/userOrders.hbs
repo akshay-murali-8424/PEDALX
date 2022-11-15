@@ -9,6 +9,7 @@
 
     .card {
         box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        background-color: #f1f3f6;
     }
 
     .card .card-header {
@@ -83,7 +84,7 @@
     @media only screen and (min-width: 600px) {
         .cardz {
             height: 11rem;
-            width: 80%;
+            width: 50%;
             margin-top: 20px;
             margin-bottom: 20px;
             margin-left: auto;
@@ -121,7 +122,7 @@
                 <h1>Hello {{userDetail.name}}</h1>
                 <nav class="d-flex align-items-center">
                     <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                    <a href="#">Orders</a>
+                    <a href="">Orders</a>
                 </nav>
             </div>
         </div>
@@ -135,7 +136,9 @@
         <a class="nav-link" href="/user-profile/{{userDetail._id}}">Profile</a>
         <a class="nav-link active" href="/user-orders/{{userDetail._id}}" >Orders</a>
         <a class="nav-link" href="/user-addresses/{{userDetail._id}}"
-            >Addresses</a>
+        >Addresses</a>
+        <a class="nav-link" href="/user-wallet/{{userDetail._id}}"
+         >Wallet</a>
     </nav>
     <hr class="mt-0 mb-4">
             <!-- Account details card-->
@@ -174,6 +177,11 @@
                              Order Status: <span class="highlight" style="color: red;">{{this.orderStatus}}</span> 
                             </div>
                             {{/eq}}
+                            {{#eq this.orderStatus "returned"}}
+                            <div class="col-md-6 text-right">
+                             Order Status: <span class="highlight" style="color: red;">{{this.orderStatus}}</span> 
+                            </div>
+                            {{/eq}}
                             <div class="col-md-6">
                               {{#each this.products}}
                               <span class="highlight">{{this.name}}<br>
@@ -185,6 +193,9 @@
                                <form action="/cancel-order/{{this._id}}" method="post">
                                <button class="primary-btn butbutton" type="submit">Cancel Order</button>
                                </form>
+                               {{/eq}}
+                               {{#eq this.orderStatus "delivered"}}
+                               <button class="primary-btn butbutton" type="submit"><a href="/return-order/{{this._id}}" style="color: white;"> Return</a></button>
                                {{/eq}}
                             </div>
                            </div>

@@ -1,13 +1,12 @@
 const { ObjectId, Timestamp } = require('mongodb')
 const { getDb } = require("../db");
-const cartHelper = require('./cartHelper');
 const asyncHandler = require("express-async-handler");
 
 
 module.exports = {
   placeOrder: asyncHandler(async (userId, address, products, total, paymentMethod) => {
     let orderStatus
-    if(paymentMethod=="cod"){
+    if(paymentMethod=="cod"||paymentMethod=="wallet"){
       orderStatus="confirmed";
     }else{
       orderStatus="pending";
@@ -49,6 +48,16 @@ module.exports = {
   }),
 
   cancelOrder:asyncHandler(async(orderId)=>{
-    await getDb().collection('orders').updateOne({_id:ObjectId(orderId)},{$set:{orderStatus:"cancelled"}})
+    const order=await getDb().collection('orders').findOneAndUpdate({_id:ObjectId(orderId)},{$set:{orderStatus:"cancelled"}})
+    return order;
+  }),
+
+  returnOrder:asyncHandler(async(orderId)=>{
+     const order= await getDb().collection('orders').findOneAndUpdate({_id:ObjectId(orderId)},{
+      $set:{
+        orderStatus:"returned"
+      }
+     })
+     return order;
   }),
 }

@@ -31,7 +31,7 @@
 			<div class="col-lg-5 offset-lg-1">
 				<div class="s_product_text">
 					<h3>{{product.[0].name}}</h3>
-					<h2>₹{{product.[0].price}}</h2>
+					<h2>₹{{toLocaleString product.[0].price}}</h2>
 					<ul class="list">
 						<li><a class="active"><span>Category</span> : {{product.[0].categoryDetails.[0].name}}</a></li>
 						<li><a class="active"><span>Brand</span> : {{product.[0].brandDetails.[0].name}}</a></li>
@@ -53,7 +53,7 @@
 						{{else}}
 						<div class="primary-btn addToCart" data-product={{product.[0]._id}}>Add to Cart</div>
 						{{/eq}}
-						<div class="icon_btn addToWishlist" data-product="{{product.[0]._id}}"><i class="lnr lnr lnr-heart"></i></div>
+						<div class="icon_btn addToWishlist" data-product="{{product.[0]._id}}" style="z-index: 0;"><i class="lnr lnr lnr-heart"></i></div>
 					</div>
 				</div>
 			</div>

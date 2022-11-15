@@ -1,5 +1,6 @@
 const { getDb } = require("../db")
 const asyncHandler = require("express-async-handler");
+const { ObjectId } = require("mongodb");
 
 
 module.exports={
@@ -12,4 +13,10 @@ module.exports={
     addBrand:asyncHandler(async(name,description)=>{
         await getDb().collection('brand').insertOne({name,description});
     }),
+
+    editBrand:asyncHandler(async(brandId,name,description)=>{
+        await getDb().collection('brand').updateOne({_id:ObjectId(brandId)},{
+            $set:{name,description}
+        })
+    })
 }

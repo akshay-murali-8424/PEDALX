@@ -1,14 +1,15 @@
-const cartHelper = require("../helpers/cartHelper");
-const productHelper = require("../helpers/productHelper")
-const mongoDb = require('mongodb')
+const cartService = require("../services/cartService");
+const productService = require("../services/productService")
+const { ObjectId } = require('mongodb')
 const asyncHandler = require("express-async-handler");
-const userHelper = require("../helpers/userHelper");
-const orderHelper = require("../helpers/orderHelper");
-const wishlistHelper = require("../helpers/wishlistHelper");
+const userService = require("../services/userService");
+const orderService = require("../services/orderService");
+const wishlistService = require("../services/wishlistService");
 const AppError = require("../utils/appError");
 const bcrypt = require("bcryptjs");
 const razorpay = require("../utils/razorpay");
 const paypal = require("../utils/paypal");
+const walletService = require("../services/walletService");
 
 
 module.exports = ({
@@ -30,8 +31,28 @@ module.exports = ({
 
   renderCyclePage: async (req, res) => {
     try {
-      const products = await productHelper.findAll();
-      res.render("allCycles", { user: true, products })
+      let isSort=true;
+      let dbQuery = {};
+      let sortOrder = {};
+      if (req.query.categoryId) {
+        dbQuery = { category: ObjectId(req.query.categoryId) }
+      }
+      if(req.query.brandId){
+        dbQuery={brand:ObjectId(req.query.brandId)}
+      }
+      if (req.query?.sort) {
+        const sort = parseInt(req.query.sort)
+        if(sort===1){
+         isSort=true;
+        }else{
+        isSort=false;
+        }
+          sortOrder = {
+            price: sort
+          }
+      }
+      const products = await productService.findAllCycles(dbQuery, sortOrder);
+      res.render("allCycles", { user: true, products, isSort})
     } catch (err) {
       console.log(err)
     }
@@ -39,12 +60,12 @@ module.exports = ({
 
   renderViewProduct: async (req, res) => {
     const productId = req.params.id;
-    const product = await productHelper.findProduct(productId);
+    const product = await productService.findProduct(productId);
     res.render("viewProduct", { user: true, product });
   },
 
   renderCartPage: async (req, res) => {
-    const cart = await cartHelper.getCart(req.user._id);
+    const cart = await cartService.getCart(req.user._id);
     if (cart) {
       let total = 0;
       cart.forEach(cart => {
@@ -59,7 +80,7 @@ module.exports = ({
   addToCart: asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const productId = req.params.id;
-    await cartHelper.addToCart(userId, productId);
+    await cartService.addToCart(userId, productId);
     res.json({
       status: "success",
       message: "product added to cart"
@@ -68,7 +89,7 @@ module.exports = ({
 
   changeProductQuantity: asyncHandler(async (req, res) => {
     const { cartId, productId, count } = req.body;
-    const result = await cartHelper.changeProductQuantity(cartId, productId, count);
+    const result = await cartService.changeProductQuantity(cartId, productId, count);
     console.log(result)
     if (result.modifiedCount === 1) {
       res.json({
@@ -84,19 +105,26 @@ module.exports = ({
   }),
 
   renderCheckoutPage: async (req, res) => {
-    const cart = await cartHelper.getCart(req.user._id);
+    const cart = await cartService.getCart(req.user._id);
     let total = 0;
     cart.forEach(cart => {
       total = total + cart.subTotal;
     });
-    const user = await userHelper.getUser(req.user._id);
-    res.render("checkout", { user: true, cart, total, user })
+    const [user,wallet] = await Promise.all([
+      userService.getUser(req.user._id),
+      walletService.getWallet(req.user._id)
+    ])
+    let isWalletMoneyEnough=false
+    if(wallet.balance>total){
+      isWalletMoneyEnough=true
+    }
+    res.render("checkout", { user: true, cart, total, user, isWalletMoneyEnough})
   },
 
   addAddress: async (req, res) => {
     console.log(req.user._id, req.body)
     try {
-      await userHelper.addAddress(req.user._id, req.body)
+      await userService.addAddress(req.user._id, req.body)
       res.json({
         status: "success",
         message: "new address added"
@@ -109,8 +137,8 @@ module.exports = ({
   placeOrder: asyncHandler(async (req, res) => {
 
     const { addressId, paymentMethod } = req.body;
-    const address = await userHelper.getAddressForCheckout(req.user._id, addressId)
-    let cart = await cartHelper.getCart(req.user._id);
+    const address = await userService.getAddressForCheckout(req.user._id, addressId)
+    let cart = await cartService.getCart(req.user._id);
     cart.forEach(cart => {
       if (cart.products.quantity > cart.productDetails.stock) {
         throw new AppError(`not enough stock for ${cart.productDetails.name}`, 401);
@@ -125,23 +153,23 @@ module.exports = ({
       total = total + cart.subTotal;
     });
 
-    const orderDetails = await orderHelper.placeOrder(req.user._id, address, products, total, paymentMethod)
+    const orderDetails = await orderService.placeOrder(req.user._id, address, products, total, paymentMethod)
     const orderId = orderDetails.insertedId;
     if (paymentMethod === "cod") {
       await Promise.all(
         cart.map(async (cart) => {
-          await productHelper.updateStockOnCheckout(cart.productDetails._id, cart.productDetails.quantity)
+          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          await productService.updateStock(cart.productDetails._id, cart.productDetails.quantity)
         })
       )
-      await cartHelper.deleteCart(req.user._id)
+      await cartService.deleteCart(req.user._id)
       res.json({
         status: "success",
         message: "order placed"
       })
     } else if (paymentMethod === "razorpay") {
       const razorResponse = await razorpay.generateRazorpay(orderId, total);
-      const userData = await userHelper.getUser(req.user._id)
-      console.log(userData)
+      const userData = await userService.getUser(req.user._id)
       res.json({
         orderId: orderId,
         razorId: razorResponse.id,
@@ -149,7 +177,6 @@ module.exports = ({
         userEmail: userData.email,
         userPhone: userData.phoneno,
         userName: userData.name
-
       })
     } else if (paymentMethod === "paypal") {
       const fn = (paypalLink) => {
@@ -168,19 +195,33 @@ module.exports = ({
         res.json({ paypalLink })
       }
       paypal.generatePayPal(req.user._id, total, fn)
+    }else if(paymentMethod==="wallet"){
+      await Promise.all(
+        cart.map(async (cart) => {
+          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          await productService.updateStock(cart.productDetails._id, cart.productDetails.quantity)
+        })
+      )
+      await cartService.deleteCart(req.user._id)
+      const status=`purchase of order ${orderId}`
+      await walletService.purchaseByWallet(req.user._id,total,status)
+      res.json({
+        status: "success",
+        message: "order placed"
+      })
     }
 
   }),
 
   renderWishlist: async (req, res) => {
-    const [wishlist] = await wishlistHelper.getWishlist(req.user._id);
+    const [wishlist] = await wishlistService.getWishlist(req.user._id);
     res.render('wishlist', { user: true, wishlist, isEmpty: wishlist.products.length })
   },
 
   addToWishlist: asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const productId = req.params.id;
-    const result = await wishlistHelper.addToWishlist(userId, productId);
+    const result = await wishlistService.addToWishlist(userId, productId);
     console.log(result);
     if (!result) {
       res.json({
@@ -198,7 +239,7 @@ module.exports = ({
   removeFromWishlist: async (req, res) => {
     const userId = req.user._id;
     const productId = req.params.id;
-    await wishlistHelper.removeFromWishlist(userId, productId);
+    await wishlistService.removeFromWishlist(userId, productId);
     res.json({
       status: "success",
       message: "product removed from wishlist"
@@ -207,14 +248,14 @@ module.exports = ({
 
   renderUserProfile: async (req, res) => {
     const userId = req.user._id;
-    const userData = await userHelper.getUser(userId);
+    const userData = await userService.getUser(userId);
     res.render('userProfile', { user: true, userData })
   },
 
   renderUserOrders: async (req, res) => {
     try {
       const userId = req.user._id;
-      const orders = await orderHelper.getOrders(userId);
+      const orders = await orderService.getOrders(userId);
       res.render('userOrders', { user: true, orders })
     } catch (err) {
       console.log(err);
@@ -224,31 +265,48 @@ module.exports = ({
   renderUserAddresses: async (req, res) => {
     try {
       const userId = req.user._id;
-      const [addresses] = await userHelper.getAddress(userId)
-      console.log(addresses);
+      const [addresses] = await userService.getAddress(userId)
       res.render('userAddress', { user: true, addresses });
-    } catch {
+    } catch(err){
       console.log(err)
+    }
+  },
+
+  editAddress:async(req,res)=>{
+    try{
+     await userService.editAddress(req.user._id,req.body,req.params.id)
+      res.redirect('back')
+    }catch(err){
+      console.log(err);
+    }
+  },
+
+  deleteAddress:async(req,res)=>{
+    try{
+     await userService.deleteAddress(req.user._id,req.params.id)
+     res.redirect('back')
+    }catch(err){
+     console.log(err)
     }
   },
 
   editPersonalInfo: asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { name, email, phoneno } = req.body;
-    const user = await userHelper.getUser(userId);
+    const user = await userService.getUser(userId);
     if (user.email != email) {
-      const isExistingEmail = await userHelper.findExistingEmail(email)
+      const isExistingEmail = await userService.findExistingEmail(email)
       if (isExistingEmail) {
         throw new AppError("existing email", 401)
       }
     }
     if (user.phoneno != phoneno) {
-      const isExistingPhoneno = await userHelper.findExistingPhoneno(phoneno)
+      const isExistingPhoneno = await userService.findExistingPhoneno(phoneno)
       if (isExistingPhoneno) {
         throw new AppError("existing phone number", 401)
       }
     }
-    await userHelper.updateUser(userId, name, email, phoneno);
+    await userService.updateUser(userId, name, email, phoneno);
     res.json({
       status: "success",
       message: "user details updated"
@@ -258,14 +316,14 @@ module.exports = ({
   changePassword: asyncHandler(async (req, res) => {
     const userId = req.user._id;
     let { currentPassword, newPassword } = req.body;
-    const user = await userHelper.getUser(userId);
+    const user = await userService.getUser(userId);
     const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password)
     // generate salt to hash password
     const salt = await bcrypt.genSalt(10);
     // hashing password
     newPassword = await bcrypt.hash(newPassword, salt);
     if (isPasswordCorrect) {
-      await userHelper.changePassword(userId, newPassword);
+      await userService.changePassword(userId, newPassword);
       res.json({
         status: "success",
         message: "password is changed"
@@ -277,34 +335,57 @@ module.exports = ({
 
   cancelOrder: async (req, res) => {
     try {
-
       const orderId = req.params.id;
-      await orderHelper.cancelOrder(orderId)
-      res.redirect(`/user-orders/${orderId}`)
+      let{value:order}=await orderService.cancelOrder(orderId);
+      console.log(order.total)
+      await Promise.all(
+        order.products.map(async(products)=>{
+          await productService.updateStock(products._id,products.quantity)
+        })
+      )
+      const status=`refunded for cancellation of the product order ${orderId}`
+      await walletService.refundToWallet(req.user._id,order.total,status)
+      res.redirect('back')
     } catch (err) {
       console.log(err);
     }
 
   },
 
+  returnOrder:async(req,res)=>{
+   try{
+    const orderId = req.params.id;
+    let {value:order}=await orderService.returnOrder(orderId);
+    await Promise.all(
+      order.products.map(async(products)=>{
+        await productService.updateStock(products._id,products.quantity)
+      })
+    )
+    res.redirect('back');
+   }catch (err) {
+    console.log(err);
+   }
+  },
+
   verifyPayment: asyncHandler(async (req, res) => {
     const { razorResponse, orderId } = req.body;
     const isSuccessfull = razorpay.verifyPayment(razorResponse);
     if (isSuccessfull) {
-      let cart = await cartHelper.getCart(req.user._id);
+      let cart = await cartService.getCart(req.user._id);
       await Promise.all(
         cart.map(async (cart) => {
-          await productHelper.updateStockOnCheckout(cart.productDetails._id, cart.products.quantity)
+          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          await productService.updateStock(cart.productDetails._id, cart.products.quantity)
         })
       )
-      await cartHelper.deleteCart(req.user._id)
-      await orderHelper.changeOrderStatus(orderId, "confirmed")
+      await cartService.deleteCart(req.user._id)
+      await orderService.changeOrderStatus(orderId, "confirmed")
       res.json({
         status: "success",
         message: "order placed"
       })
     } else {
-      await orderHelper.changeOrderStatus(orderId, "cancelled")
+      await orderService.changeOrderStatus(orderId, "cancelled")
       throw new AppError("payment failed", 401)
     }
 
@@ -318,23 +399,71 @@ module.exports = ({
     const orderId = req.cookies.orderId;
     const userId = req.user._id;
     const fn = async () => {
-      let cart = await cartHelper.getCart(req.user._id);
+      let cart = await cartService.getCart(req.user._id);
       await Promise.all(
         cart.map(async (cart) => {
-          await productHelper.updateStockOnCheckout(cart.productDetails._id, cart.products.quantity)
+          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          await productService.updateStock(cart.productDetails._id, cart.products.quantity)
         })
       )
-      await cartHelper.deleteCart(req.user._id)
-      await orderHelper.changeOrderStatus(orderId, "confirmed")
-      res.redirect('/')
+      await cartService.deleteCart(req.user._id)
+      await orderService.changeOrderStatus(orderId, "confirmed")
+      res.redirect('/success-order')
     }
     paypal.executePaypal(payerld, paymentId, total, fn);
 
   },
 
-  paypalCancel:(req,res)=>{
+  paypalCancel: (req, res) => {
     res.redirect('/checkout')
-  } 
+  },
 
+  renderSuccessOrder: (req, res) => {
+    const userId = req.user._id;
+    res.render('successOrder', { user: true, userId })
+  },
 
+  renderUserWallet:async (req,res)=>{
+    try{
+      const wallet=await walletService.getWallet(req.params.id)
+      res.render('userWallet',{user:true,wallet})
+    }catch(err){
+      console.log(err);
+    }
+  },
+
+  addMoneyToWallet:async(req,res)=>{
+    try{
+      const amount=req.body.amount;
+      const transactionId=await walletService.addTransaction(req.user._id,amount,true);
+      const razorResponse=await razorpay.generateRazorpay(transactionId,amount);
+      const userData = await userService.getUser(req.user._id)
+      res.json({
+       transactionId:transactionId,
+        razorId: razorResponse.id,
+        amount: razorResponse.amount,
+        userEmail: userData.email,
+        userPhone: userData.phoneno,
+        userName: userData.name
+      })
+    }catch(err){
+      console.log(err);
+    }
+  },
+
+  verifyAddMoneyToWallet:asyncHandler(async(req,res)=>{
+    const { razorResponse, transactionId, amount } = req.body;
+    const isSuccessfull = razorpay.verifyPayment(razorResponse);
+    if(isSuccessfull){
+      await walletService.addMoney(req.user._id,transactionId,amount,"added money by razorpay");
+      res.json({
+        status:"success",
+        message:"payment successfull"
+      })
+    }else{
+      throw new AppError("payment failed", 401)
+    }
+  }),
+
+  
 })

@@ -4,8 +4,9 @@ const AppError = require("../utils/appError");
 const asyncHandler = require("express-async-handler");
 const { promisify } = require("util");
 const bcrypt = require("bcryptjs");
-const userHelper = require("../helpers/userHelper");
+const userService = require("../services/userService");
 const mongodb = require("mongodb");
+const walletService = require("../services/walletService");
 const client = require("twilio")(
   process.env.TWILIO_SID,
   process.env.TWILIO_AUTH_TOKEN
@@ -41,8 +42,8 @@ module.exports = {
   // @route /register POST
   userRegister: asyncHandler(async (req, res) => {
     let { name, email, password, phoneno } = req.body;
-    const isExistingEmail = await userHelper.findExistingEmail(email);
-    const isExistingPhoneno = await userHelper.findExistingPhoneno(phoneno);
+    const isExistingEmail = await userService.findExistingEmail(email);
+    const isExistingPhoneno = await userService.findExistingPhoneno(phoneno);
     if (isExistingEmail) {
       res.json({
         status: "email",
@@ -58,7 +59,7 @@ module.exports = {
       const salt = await bcrypt.genSalt(10);
       // hashing password
       password = await bcrypt.hash(password, salt);
-      const user = await userHelper.addUser(name, email, password, phoneno);
+      const user = await userService.addUser(name, email, password, phoneno);
       const token = jwt.sign({ userId: user.insertedId }, process.env.JWT_SECRET, {
         expiresIn: "2d",
       });
@@ -68,10 +69,7 @@ module.exports = {
         secure: false,
         maxAge: 24 * 60 * 60 * 1000,
       });
-      res.json({
-        status: "success",
-        message: "success",
-      });
+      await walletService.createWallet(user.insertedId)
       res.json({
         status: "success",
         message: "success",
@@ -84,7 +82,10 @@ module.exports = {
   // @route login POST
   verifyUserLogin: asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await userHelper.findExistingEmail(email);
+    const user = await userService.findExistingEmail(email);
+    if(user.isBlocked){
+      throw new AppError("this user is blocked by the company",401)
+    }
     if (user) {
       const userId = mongodb.ObjectId(user._id);
       const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -103,24 +104,17 @@ module.exports = {
           message: "success",
         });
       } else {
-        res.status(400).json({
-          status: "password-incorrect",
-          message:
-            "Sorry, your password was incorrect. Please double-check your password",
-        });
+        throw new AppError("Sorry, your password was incorrect. Please double-check your password",401)
       }
     } else {
-      res.status(400).json({
-        status: "emailerror",
-        message: "this account doesn't exist",
-      });
+      throw new AppError("this account doesn't exist",401);
     }
   }),
 
   sendOtp: async (req, res) => {
     try {
       const { phoneno } = req.body;
-      const isExistingPhoneno = await userHelper.findExistingPhoneno(phoneno);
+      const isExistingPhoneno = await userService.findExistingPhoneno(phoneno);
       if (isExistingPhoneno) {
         const result = await client.verify
           .services(process.env.TWILIO_SERVICE_ID)
@@ -156,7 +150,7 @@ module.exports = {
         });
       console.log(data.status)
       if (data.status == "approved") {
-        const user =await userHelper.findExistingPhoneno(req.body.phoneno);
+        const user =await userService.findExistingPhoneno(req.body.phoneno);
         console.log({ user });
         const userId = mongodb.ObjectId(user._id);
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, {

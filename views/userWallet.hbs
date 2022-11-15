@@ -1,0 +1,272 @@
+<style>
+  .img-account-profile {
+    height: 10rem;
+  }
+
+  .rounded-circle {
+    border-radius: 50% !important;
+  }
+
+  .card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+  }
+
+  .card .card-header {
+    font-weight: 500;
+  }
+
+  .card-header:first-child {
+    border-radius: 0.35rem 0.35rem 0 0;
+  }
+
+  .card-header {
+    padding: 1rem 1.35rem;
+    margin-bottom: 0;
+    background-color: rgba(33, 40, 50, 0.03);
+    border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+  }
+
+  .form-control,
+  .dataTable-input {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1;
+    color: #69707a;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #c5ccd6;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .nav-borders .nav-link.active {
+    color: #fd8900;
+    border-bottom-color: #fd8900;
+  }
+
+  .nav-borders .nav-link {
+    color: #69707a;
+    border-bottom-width: 0.125rem;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .nav {
+    justify-content: center;
+  }
+
+  .walletBalance {
+
+    border-radius: 43px;
+    line-height: normal;
+    font-size: xx-large;
+    padding: 43px !important;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    transition: all .5s ease-in-out;
+  }
+
+  .walletBalance:hover {
+    transform: scale(1.1);
+  }
+
+  .wallet {
+    gap: 3rem;
+  }
+
+  .add-money-btn {
+    height: 38px;
+    border-radius: 6px;
+    border: 0;
+    line-height: normal;
+  }
+
+  #transactionTable {
+    width: 70%;
+  }
+</style>
+
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+      <div class="col-first">
+        <h1>Hello {{userDetail.name}}</h1>
+        <nav class="d-flex align-items-center">
+          <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+          <a href="">Wallet</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Banner Area -->
+
+<div class="container-xl px-4 mt-4">
+  <!-- Account page navigation-->
+  <nav class="nav nav-borders">
+    <a class="nav-link" href="/user-profile/{{userDetail._id}}">Profile</a>
+    <a class="nav-link" href="/user-orders/{{userDetail._id}}">Orders</a>
+    <a class="nav-link" href="/user-addresses/{{userDetail._id}}">Addresses</a>
+    <a class="nav-link active" href="/user-wallet/{{userDetail._id}}">Wallet</a>
+  </nav>
+  <hr class="mt-0 mb-4">
+  <div class="d-flex justify-content-center mt-5 mb-5 wallet">
+    <div class=" walletBalance">
+      <p>Wallet Balance: <br>
+        <span style="color: #008000;">₹{{toLocaleString wallet.balance}}</span>
+      </p>
+    </div>
+    <div> <button class="primary-btn" data-toggle="modal" data-target="#exampleModalCenter" style="border: 0;">add
+        money</button> </div>
+
+    {{!--add money modal --}}
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Add money to wallet</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form autocomplete="off" id="addToWalletForm">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Amount</label>
+                <input type="number" class="form-control" aria-describedby="emailHelp" name="amount" id="amount">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="primary-btn add-money-btn">Add</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+     <h4 style="text-align: center;">Wallet Transactions</h4>
+  <table class="table mt-4 mx-auto text-dark" id="transactionTable">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Statement</th>
+        <th scope="col">Date</th>
+        <th scope="col">Credit or Debit</th>
+      </tr>
+    </thead>
+    <tbody>
+     {{#each wallet.transactions}}
+      <tr>
+        <th scope="row">{{inc @index}}</th>
+        <td>₹{{toLocaleString this.amount}}</td>
+        <td>{{this.status}}</td>
+        <td>{{this.date}}</td>
+          {{#if this.credit}}
+         <td style="color: green;">credit</td>
+         {{else}}
+         <td style="color: red;">debit</td>
+         {{/if}}
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+
+
+</div>
+
+
+<script>
+  const verifyPayment = async (razorResponse, transactionId, amount) => {
+    try {
+      const res = await axios({
+        method: 'POST', url: '/verify-add-money-to-wallet', data: { razorResponse, transactionId, amount }
+      })
+      console.log(res)
+      location.reload()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const addMoneyToWallet = async (amount) => {
+    try {
+
+      const res = await axios({
+        method: "POST", url: "/add-money-to-wallet", data: { amount }
+      })
+      console.log(res)
+      const options = {
+        "key": "rzp_test_fjHiuCYRBblZjU", // Enter the Key ID generated from the Dashboard
+        "amount": res.data.amount + "", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "PEDELX",
+        "description": "Test Transaction",
+        "image": "/img/logopedalx.png",
+        "order_id": res.data.razorId + "", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+
+        "handler": function (response) {
+
+          verifyPayment(response, res.data.transactionId, res.data.amount)
+        },
+        "prefill": {
+          "name": res.data.userName,
+          "email": res.data.userEmail,
+          "contact": res.data.userPhone
+        },
+        "notes": {
+          "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+          "color": "#3399cc"
+        }
+      };
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+
+  $(document).ready(function () {
+    $("#addToWalletForm").validate({
+      errorClass: 'errors',
+      rules: {
+        amount: {
+          required: true,
+        },
+      },
+      messages: {
+        amount: {
+          required: "Please enter the amount",
+        },
+      },
+      submitHandler: function () {
+        const amount = document.getElementById('amount').value;
+        addMoneyToWallet(amount);
+      }
+    });
+  });
+</script>
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>

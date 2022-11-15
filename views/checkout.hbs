@@ -83,12 +83,22 @@
               </div>
 
             </div>
+            {{#if isWalletMoneyEnough}}
+            <div class="payment_item ">
+              <div class="radion_btn">
+                <input type="radio" id="f8" name="payment-option" value="wallet">
+                <label for="f8">Wallet</label>
+        
+                <div class="check"></div>
+              </div>
 
+            </div>
+            {{/if}}
             <div class="alert alert-danger d-none payment-alert" role="alert">
               Please select an payment method to place order
             </div>
             <a class="primary-btn" id="proceed">Place Order</a>
-            
+    
           </div>
         </div>
       </div>

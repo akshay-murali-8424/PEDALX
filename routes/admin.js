@@ -55,6 +55,8 @@ router.route('/addCategory')
 //@desc admin category adding
 .post(adminAuth.adminAuthentication,adminController.addCategory)
 
+router.post('/edit-category/:id',adminAuth.adminAuthentication,adminController.editCategory)
+
 //@desc admin brand management
 router.get('/brand',adminAuth.adminAuthentication,adminController.renderBrandPage)
 
@@ -64,7 +66,11 @@ router.route('/addBrand')
 //@desc admin category adding
 .post(adminAuth.adminAuthentication,adminController.addBrand)
 
+router.post('/edit-brand/:id',adminAuth.adminAuthentication,adminController.editBrand)
+
 router.get('/user-management',adminAuth.adminAuthentication,adminController.renderUserManagement)
+
+router.get('/user-status-changer/:id',adminAuth.adminAuthentication,adminController.changeUserStatus)
 
 router.get('/orders',adminAuth.adminAuthentication,adminController.renderOrdersPage)
 

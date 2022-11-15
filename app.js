@@ -6,6 +6,8 @@ const logger = require('morgan');
 const colors = require('colors');
 const hbs=require('express-handlebars')
 const multer=require('multer')
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 
 
 const indexRouter = require('./routes/user');
@@ -88,4 +90,9 @@ app.use(function(err, req, res, next) {
   })
 });
 
-module.exports = app;
+app.listen(process.env.PORT, function(err){
+  if (err) console.log("Error in server setup")
+  console.log(`Server listening on Port ${process.env.PORT}`.bgWhite.magenta);
+})
+
+

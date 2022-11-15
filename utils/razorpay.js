@@ -25,7 +25,6 @@ module.exports = {
     },
 
     verifyPayment:(razorpayResponse)=>{
-    console.log(razorpayResponse)
       let hmac=crypto.createHmac('sha256',process.env.RAZOR_KEY_SECRET)
       hmac.update(razorpayResponse.razorpay_order_id+'|'+razorpayResponse.razorpay_payment_id)
       hmac=hmac.digest('hex')

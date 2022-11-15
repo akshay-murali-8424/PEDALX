@@ -77,11 +77,15 @@ module.exports={
     console.log(result);
     }),
 
-    updateStockOnCheckout:asyncHandler(async(productId,quantity)=>{
-        quantity=-Math.abs(quantity)
+    updateStock:asyncHandler(async(productId,quantity)=>{
         await getDb().collection('products').updateOne({_id:mongodb.ObjectId(productId)},{
           $inc:{stock: quantity}
         });
         
-    })
+    }),
+
+    findAllCycles:asyncHandler( async(dbQuery,sortOrder)=>{
+        const products=await getDb().collection('products').find(dbQuery).sort(sortOrder).toArray();
+        return products;
+    }),
 }
