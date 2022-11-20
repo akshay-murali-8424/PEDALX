@@ -89,4 +89,6 @@ router.get('/success',userAuth.userPermission,userController.paypalSuccess)
 
 router.get('/cancel',userController.paypalCancel)
 
+router.post('/apply-coupon',userAuth.userPermission,userController.applyCoupon)
+
 module.exports = router;

@@ -81,7 +81,7 @@
             <div class="card-body text-center mx-auto">
                 <div class='cvp'>
                     <h5 class="card-title font-weight-bold">{{this.name}}</h5>
-                    <p class="card-text">₹{{this.price}}</p>
+                    <p class="card-text">₹{{this.offerPrice}}</p>
                     <a href="/view-product/{{this._id}}" class="btn details px-auto">view details</a><br />
                     <div class="btn carts px-auto addToCart" data-product="{{this._id}}">ADD TO CART</div>
                 </div>
@@ -91,8 +91,8 @@
     </div>
     {{else}}
     <div class="emptycart">
-    <img src="/img/emptycart.jpg" style="width: 500px;">
-    </div>
+<img src="/img/emptycart.jpg" style="width: 500px;">                                                                                                                                                         
+</div>
     {{/if}}
 
 

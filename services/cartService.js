@@ -63,7 +63,7 @@ module.exports = {
               productDetails: 1, 
               subTotal: {
                   $multiply: [
-                      '$products.quantity', '$productDetails.price'
+                      '$products.quantity', '$productDetails.offerPrice'
                   ]
               }
           }
@@ -86,4 +86,12 @@ module.exports = {
     const result=await getDb().collection('cart').deleteOne({user:ObjectId(userId)})
     console.log(result);
   }),
+
+  applyCoupon:asyncHandler(async(userId,couponId)=>{
+    await getDb().collection('cart').updateOne({user: ObjectId(userId)},{
+      $set:{
+        coupon:couponId
+      }
+    })
+  })
 };

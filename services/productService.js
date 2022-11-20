@@ -1,5 +1,5 @@
 const { getDb } = require("../db")
-const mongodb=require('mongodb')
+const {ObjectId}=require('mongodb')
 const asyncHandler = require("express-async-handler");
 
 module.exports={
@@ -27,16 +27,16 @@ module.exports={
 
 
     addProduct:asyncHandler(async (name,description,price,category,brand,stock,images)=>{
-        const newPrice=parseInt(price)
+        price=parseInt(price)
         stock=parseInt(stock)
-        await getDb().collection('products').insertOne({name,description,price:newPrice,category:mongodb.ObjectId(category),brand:mongodb.ObjectId(brand),stock,images})
+        await getDb().collection('products').insertOne({name,description,price,offerPrice:price,category:ObjectId(category),brand:ObjectId(brand),stock,images})
     }),
 
     findProduct:asyncHandler(async(id)=>{
         const product=await getDb().collection('products').aggregate([
             {
                $match:{
-                _id:mongodb.ObjectId(id)
+                _id:ObjectId(id)
                }
             },
             {
@@ -60,14 +60,14 @@ module.exports={
     }),
 
     findProductForEdit:asyncHandler(async(productId)=>{
-        const product=await getDb().collection('products').findOne({_id:mongodb.ObjectId(productId)})
+        const product=await getDb().collection('products').findOne({_id:ObjectId(productId)})
         return product;
     }),
 
     updateProduct:asyncHandler(async(productId,name,description,price,category,brand,stock,images)=>{
-      category=mongodb.ObjectId(category)
-      brand=mongodb.ObjectId(brand)
-      productId=mongodb.ObjectId(productId)
+      category=ObjectId(category)
+      brand=ObjectId(brand)
+      productId=ObjectId(productId)
       price=parseInt(price);
       stock=parseInt(stock);
       result=await getDb().collection('products').updateOne({_id:productId},
@@ -78,14 +78,66 @@ module.exports={
     }),
 
     updateStock:asyncHandler(async(productId,quantity)=>{
-        await getDb().collection('products').updateOne({_id:mongodb.ObjectId(productId)},{
+        await getDb().collection('products').updateOne({_id:ObjectId(productId)},{
           $inc:{stock: quantity}
         });
         
     }),
 
-    findAllCycles:asyncHandler( async(dbQuery,sortOrder)=>{
-        const products=await getDb().collection('products').find(dbQuery).sort(sortOrder).toArray();
+    findAllCycles:asyncHandler( async(dbQuery,sortOrder,pageNo,limit)=>{
+        pageNo=parseInt(pageNo)
+        limit=parseInt(limit)
+        const products=await getDb().collection('products').find(dbQuery).sort(sortOrder).skip(pageNo*limit).limit(limit).toArray();
         return products;
     }),
+
+    changeOfferPrice:asyncHandler(async(id,discount,typeOfOffer)=>{
+        discount=parseInt(discount)
+        let matchquery={}
+        if(typeOfOffer==="productOffer"){
+          matchquery={_id:ObjectId(id)}
+        }else if(typeOfOffer==="categoryOffer"){
+            matchquery={category:ObjectId(id)}
+        }
+        await getDb().collection('products').updateMany(matchquery,[
+            {
+            $set:{
+              [typeOfOffer]:discount
+            }
+          },
+            {
+              $set:{
+                discount:{
+                  $switch:{
+                    branches:[
+                      {
+                        case: {$gte:['$categoryOffer','$productOffer']},
+                        then:'$categoryOffer'
+                      },
+                      {
+                        case: {$gte:['$productOffer','$categoryOffer']},
+                        then:'$productOffer'
+                      }
+                    ],
+                    default:0
+                  }
+                }
+              }
+            },
+            {
+              $set:{
+                offerPrice:{
+                 $trunc:[
+                  {$subtract:['$price',{$multiply:[{$divide:['$discount',100]},'$price']}]},0]
+                }
+              }
+            }
+          ])
+
+    }),
+
+    findAllInCategory:asyncHandler(async(dbQuery)=>{
+       const products=await getDb().collection('products').find(dbQuery).toArray();
+       return products;
+    })
 }

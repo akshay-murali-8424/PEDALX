@@ -1,5 +1,4 @@
 
-
 const addNewAddress = async (name, house, area, city,state, country, pincode) => {
   try {
     const res = await axios({

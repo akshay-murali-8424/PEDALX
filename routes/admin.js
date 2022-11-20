@@ -76,5 +76,18 @@ router.get('/orders',adminAuth.adminAuthentication,adminController.renderOrdersP
 
 router.post('/change-order-status/:id',adminAuth.adminAuthentication,adminController.changeOrderStatus)
 
+router.get('/offers',adminAuth.adminAuthentication,adminController.renderOffersPage)
+
+router.patch('/add-product-offer',adminAuth.adminAuthentication,adminController.addProductOffer)
+
+router.patch('/edit-product-offer',adminAuth.adminAuthentication,adminController.editProductOffer)
+
+router.patch('/add-category-offer',adminAuth.adminAuthentication,adminController.addCategoryOffer)
+
+router.patch('/edit-category-offer',adminAuth.adminAuthentication,adminController.editcategoryOffer)
+
+router.get('/coupons',adminAuth.adminAuthentication,adminController.renderCouponsPage)
+
+router.post('/add-coupon',adminAuth.adminAuthentication,adminController.addCoupon)
 
 module.exports = router;

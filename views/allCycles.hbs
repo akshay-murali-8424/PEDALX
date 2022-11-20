@@ -98,12 +98,13 @@
 					</select> --}}
 				</div>
 				<div class="pagination">
-					<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-					<a href="#" class="active">1</a>
-					<a href="#">2</a>
-					<a href="#">3</a>
-					<a href="#">4</a>
-					<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+				   {{#each page}}
+                    {{#eq this pageNo}}
+					<a onclick="page({{this}})" class="active">{{this}}</a>
+                     {{else}}
+					<a onclick="page({{this}})">{{this}}</a>
+                     {{/eq}}
+					{{/each}}
 				</div>
 			</div>
 			<!-- End Filter Bar -->
@@ -125,8 +126,12 @@
 									<h6>{{this.name}}</h6>
 								</a>
 								<div class="price">
+                                    {{#eq this.price this.offerPrice}}
 									<h6>₹{{toLocaleString this.price}}</h6>
-									<h6 class="l-through">₹210000.00</h6>
+                                     {{else}}
+									 <h6>₹{{toLocaleString this.offerPrice}}</h6>
+									<h6 class="l-through">₹{{toLocaleString this.price}}</h6>
+									{{/eq}}
 								</div>
 								<div class="prd-bottom">
 
@@ -160,12 +165,9 @@
 					</select> --}}
 				</div>
 				<div class="pagination">
-					<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
-					<a href="#" class="active">1</a>
-					<a href="#">2</a>
-					<a href="#">3</a>
-					<a href="#">4</a>
-					<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+					 {{#each page}}
+					<a onclick="page({{this}})">{{this}}</a>
+					{{/each}}
 				</div>
 			</div>
 			<!-- End Filter Bar -->
@@ -183,6 +185,18 @@ function sort() {
     let url = new URL(window.location.href);
     let params = new URLSearchParams(url.search);
     params.set('sort', selectedValue);
+    let newParams = params.toString();
+    
+    
+    
+   location.href = window.location.protocol + "//" + window.location.host + '/cycles?' + newParams;
+  }
+
+  function page(value) {
+    
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    params.set('p', value);
     let newParams = params.toString();
     
     

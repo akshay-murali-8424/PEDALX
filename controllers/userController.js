@@ -10,6 +10,7 @@ const bcrypt = require("bcryptjs");
 const razorpay = require("../utils/razorpay");
 const paypal = require("../utils/paypal");
 const walletService = require("../services/walletService");
+const couponService = require("../services/couponService");
 
 
 module.exports = ({
@@ -31,28 +32,46 @@ module.exports = ({
 
   renderCyclePage: async (req, res) => {
     try {
-      let isSort=true;
+      const limit=6
+      let isSort = true;
       let dbQuery = {};
+      let pageNo
       let sortOrder = {};
+      if (req.query?.p) {
+        pageNo = req.query.p - 1 || 0;
+      }else{
+       pageNo=0
+      }
       if (req.query.categoryId) {
         dbQuery = { category: ObjectId(req.query.categoryId) }
       }
-      if(req.query.brandId){
-        dbQuery={brand:ObjectId(req.query.brandId)}
+      if (req.query.brandId) {
+        dbQuery = { brand: ObjectId(req.query.brandId) }
       }
       if (req.query?.sort) {
         const sort = parseInt(req.query.sort)
-        if(sort===1){
-         isSort=true;
-        }else{
-        isSort=false;
+        if (sort === 1) {
+          isSort = true;
+        } else {
+          isSort = false;
         }
-          sortOrder = {
-            price: sort
-          }
+        sortOrder = {
+          offerPrice: sort
+        }
       }
-      const products = await productService.findAllCycles(dbQuery, sortOrder);
-      res.render("allCycles", { user: true, products, isSort})
+      const products = await productService.findAllCycles(dbQuery, sortOrder,pageNo,limit);
+      const allProducts=await productService.findAllInCategory(dbQuery)
+      let max = allProducts.length / limit;
+      let m = Math.ceil(max);
+      let page = [];
+      for (let i = 1; i <= m; i++) {
+        page.push(parseInt(i));
+      }
+      pageNo=pageNo+1;
+      pageNo=parseInt(pageNo);
+      console.log(pageNo);
+      console.log(page);
+      res.render("allCycles", { user: true, products, isSort, page, pageNo })
     } catch (err) {
       console.log(err)
     }
@@ -110,15 +129,15 @@ module.exports = ({
     cart.forEach(cart => {
       total = total + cart.subTotal;
     });
-    const [user,wallet] = await Promise.all([
+    const [user, wallet] = await Promise.all([
       userService.getUser(req.user._id),
       walletService.getWallet(req.user._id)
     ])
-    let isWalletMoneyEnough=false
-    if(wallet.balance>total){
-      isWalletMoneyEnough=true
+    let isWalletMoneyEnough = false
+    if (wallet.balance > total) {
+      isWalletMoneyEnough = true
     }
-    res.render("checkout", { user: true, cart, total, user, isWalletMoneyEnough})
+    res.render("checkout", { user: true, cart, total, user, isWalletMoneyEnough })
   },
 
   addAddress: async (req, res) => {
@@ -158,7 +177,7 @@ module.exports = ({
     if (paymentMethod === "cod") {
       await Promise.all(
         cart.map(async (cart) => {
-          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          cart.productDetails.quantity = cart.productDetails.quantity * -1;
           await productService.updateStock(cart.productDetails._id, cart.productDetails.quantity)
         })
       )
@@ -195,16 +214,16 @@ module.exports = ({
         res.json({ paypalLink })
       }
       paypal.generatePayPal(req.user._id, total, fn)
-    }else if(paymentMethod==="wallet"){
+    } else if (paymentMethod === "wallet") {
       await Promise.all(
         cart.map(async (cart) => {
-          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          cart.productDetails.quantity = cart.productDetails.quantity * -1;
           await productService.updateStock(cart.productDetails._id, cart.productDetails.quantity)
         })
       )
       await cartService.deleteCart(req.user._id)
-      const status=`purchase of order ${orderId}`
-      await walletService.purchaseByWallet(req.user._id,total,status)
+      const status = `purchase of order ${orderId}`
+      await walletService.purchaseByWallet(req.user._id, total, status)
       res.json({
         status: "success",
         message: "order placed"
@@ -267,26 +286,26 @@ module.exports = ({
       const userId = req.user._id;
       const [addresses] = await userService.getAddress(userId)
       res.render('userAddress', { user: true, addresses });
-    } catch(err){
+    } catch (err) {
       console.log(err)
     }
   },
 
-  editAddress:async(req,res)=>{
-    try{
-     await userService.editAddress(req.user._id,req.body,req.params.id)
+  editAddress: async (req, res) => {
+    try {
+      await userService.editAddress(req.user._id, req.body, req.params.id)
       res.redirect('back')
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   },
 
-  deleteAddress:async(req,res)=>{
-    try{
-     await userService.deleteAddress(req.user._id,req.params.id)
-     res.redirect('back')
-    }catch(err){
-     console.log(err)
+  deleteAddress: async (req, res) => {
+    try {
+      await userService.deleteAddress(req.user._id, req.params.id)
+      res.redirect('back')
+    } catch (err) {
+      console.log(err)
     }
   },
 
@@ -336,15 +355,15 @@ module.exports = ({
   cancelOrder: async (req, res) => {
     try {
       const orderId = req.params.id;
-      let{value:order}=await orderService.cancelOrder(orderId);
+      let { value: order } = await orderService.cancelOrder(orderId);
       console.log(order.total)
       await Promise.all(
-        order.products.map(async(products)=>{
-          await productService.updateStock(products._id,products.quantity)
+        order.products.map(async (products) => {
+          await productService.updateStock(products._id, products.quantity)
         })
       )
-      const status=`refunded for cancellation of the product order ${orderId}`
-      await walletService.refundToWallet(req.user._id,order.total,status)
+      const status = `refunded for cancellation of the product order ${orderId}`
+      await walletService.refundToWallet(req.user._id, order.total, status)
       res.redirect('back')
     } catch (err) {
       console.log(err);
@@ -352,19 +371,21 @@ module.exports = ({
 
   },
 
-  returnOrder:async(req,res)=>{
-   try{
-    const orderId = req.params.id;
-    let {value:order}=await orderService.returnOrder(orderId);
-    await Promise.all(
-      order.products.map(async(products)=>{
-        await productService.updateStock(products._id,products.quantity)
-      })
-    )
-    res.redirect('back');
-   }catch (err) {
-    console.log(err);
-   }
+  returnOrder: async (req, res) => {
+    try {
+      const orderId = req.params.id;
+      let { value: order } = await orderService.returnOrder(orderId);
+      await Promise.all(
+        order.products.map(async (products) => {
+          await productService.updateStock(products._id, products.quantity)
+        })
+      )
+      const status = `refunded for return of the product order ${orderId}`
+      await walletService.refundToWallet(req.user._id, order.total, status)
+      res.redirect('back');
+    } catch (err) {
+      console.log(err);
+    }
   },
 
   verifyPayment: asyncHandler(async (req, res) => {
@@ -374,7 +395,7 @@ module.exports = ({
       let cart = await cartService.getCart(req.user._id);
       await Promise.all(
         cart.map(async (cart) => {
-          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          cart.productDetails.quantity = cart.productDetails.quantity * -1;
           await productService.updateStock(cart.productDetails._id, cart.products.quantity)
         })
       )
@@ -402,7 +423,7 @@ module.exports = ({
       let cart = await cartService.getCart(req.user._id);
       await Promise.all(
         cart.map(async (cart) => {
-          cart.productDetails.quantity=cart.productDetails.quantity*-1;
+          cart.productDetails.quantity = cart.productDetails.quantity * -1;
           await productService.updateStock(cart.productDetails._id, cart.products.quantity)
         })
       )
@@ -423,47 +444,62 @@ module.exports = ({
     res.render('successOrder', { user: true, userId })
   },
 
-  renderUserWallet:async (req,res)=>{
-    try{
-      const wallet=await walletService.getWallet(req.params.id)
-      res.render('userWallet',{user:true,wallet})
-    }catch(err){
+  renderUserWallet: async (req, res) => {
+    try {
+      const wallet = await walletService.getWallet(req.params.id)
+      res.render('userWallet', { user: true, wallet })
+    } catch (err) {
       console.log(err);
     }
   },
 
-  addMoneyToWallet:async(req,res)=>{
-    try{
-      const amount=req.body.amount;
-      const transactionId=await walletService.addTransaction(req.user._id,amount,true);
-      const razorResponse=await razorpay.generateRazorpay(transactionId,amount);
+  addMoneyToWallet: async (req, res) => {
+    try {
+      const amount = req.body.amount;
+      const transactionId = await walletService.addTransaction(req.user._id, amount, true);
+      const razorResponse = await razorpay.generateRazorpay(transactionId, amount);
       const userData = await userService.getUser(req.user._id)
       res.json({
-       transactionId:transactionId,
+        transactionId: transactionId,
         razorId: razorResponse.id,
         amount: razorResponse.amount,
         userEmail: userData.email,
         userPhone: userData.phoneno,
         userName: userData.name
       })
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   },
 
-  verifyAddMoneyToWallet:asyncHandler(async(req,res)=>{
+  verifyAddMoneyToWallet: asyncHandler(async (req, res) => {
     const { razorResponse, transactionId, amount } = req.body;
     const isSuccessfull = razorpay.verifyPayment(razorResponse);
-    if(isSuccessfull){
-      await walletService.addMoney(req.user._id,transactionId,amount,"added money by razorpay");
+    if (isSuccessfull) {
+      await walletService.addMoney(req.user._id, transactionId, amount, "added money by razorpay");
       res.json({
-        status:"success",
-        message:"payment successfull"
+        status: "success",
+        message: "payment successfull"
       })
-    }else{
+    } else {
       throw new AppError("payment failed", 401)
     }
   }),
 
-  
+  applyCoupon:asyncHandler(async (req,res)=>{
+    const {name}=req.body;
+    const coupon=await couponService.findOne(name)
+    if(!coupon){
+      throw new AppError("please enter a invalid coupon",401)
+    }
+    const isUsedCoupon=await couponService.checkUsedCoupon(req.user._id,coupon._id)
+    if(isUsedCoupon){
+      throw new AppError("this coupon is already used",401)
+    }
+    await cartService.applyCoupon(req.user._id,coupon._id)
+    res.json({
+      status:"success"
+    })
+  })
+
 })

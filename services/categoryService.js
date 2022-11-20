@@ -17,5 +17,12 @@ module.exports={
         await getDb().collection('category').updateOne({_id:ObjectId(categoryId)},{
             $set:{name,description}
         })
+    }),
+
+    changeOffer:asyncHandler(async(categoryId,discount)=>{
+        discount=parseInt(discount)
+        await getDb().collection('category').updateOne({_id:ObjectId(categoryId)},{
+            $set:{offer:discount}
+        })
     })
 }

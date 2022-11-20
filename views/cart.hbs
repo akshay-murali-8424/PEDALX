@@ -1,171 +1,231 @@
-
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Shopping Cart</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="/cart">Cart</a>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- End Banner Area -->
-
-    {{#if isEmpty}}
-    <!--================Cart Area =================-->
-    <section class="cart_area">
-        <div class="container">
-            <div class="cart_inner">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Product</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each cart}}
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img src={{this.productDetails.images.[0]}} width="100px">
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="highlight">{{this.productDetails.name}}</div>
-                                            <br><div>Stocks left: <span class="highlight" id="stock{{this.productDetails._id}}">{{this.productDetails.stock}}</span> </p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>{{toLocaleString this.productDetails.price}}</h5>
-                                </td>
-                                <td>
-                                    <div>
-                                        <span class="btn btn-dark" onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',-1,'{{this.productDetails.price}}')"><i class="fas fa-minus"></i></span>
-                                        <button class="btn btn-light" id="{{products.productId}}" style="cursor: default;">{{products.quantity}}</button>
-                                        <span class="btn btn-primary" onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',1,'{{this.productDetails.price}}')"><i class="fas fa-plus"></i></span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5 class="{{products.productId}} subTotal">₹{{toLocaleString this.subTotal}}</h5>
-                                </td>
-                            </tr>
-                           {{/each}}
-                            <tr class="bottom_button">
-                                <td>
-                                    <a class="gray_btn" href="#">Update Cart</a>
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    <div class="cupon_text d-flex align-items-center">
-                                        <input type="text" placeholder="Coupon Code">
-                                        <a class="primary-btn" href="#">Apply</a>
-                                        <a class="gray_btn" href="#">Close Coupon</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    <h5>Grandtotal</h5>
-                                </td>
-                                <td>
-                                    <h5 id="grandTotal">₹{{toLocaleString total}}</h5>
-                                </td>
-                            </tr>
-                           
-                        </tbody>
-                    </table>
-                                    <div class="checkout_btn_inner d-flex align-items-center justify-content-end">
-                                        <a class="gray_btn" href="/">Continue Shopping</a>
-                                        <a class="primary-btn checkout-button" href="/checkout">Proceed to checkout</a>
-                                    </div>
-    
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--================End Cart Area =================-->
-    {{else}}
-    <div class="emptycart">
-    <img src="/img/emptycart.jpg" style="width: 500px;">
-    </div>
-    {{/if}}
-
-
 <style>
-    .checkout-button{
+    .checkout-button {
         border-radius: 0;
     }
-    .emptycart{
+
+    .emptycart {
         display: flex;
         justify-content: center;
     }
-    .highlight{
+
+    .highlight {
         color: black;
         font-weight: 500;
     }
 </style>
 
-<script>
-  
-  
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Shopping Cart</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="/cart">Cart</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
 
-  
-  const changeQuantity=async (cartId,productId,count,price)=>{
-    const stock = parseInt(document.getElementById(`stock${productId}`).textContent)
-    const price1=parseInt(price)
-    const quantity=parseInt(document.getElementById(productId).textContent)
-    if(quantity>=stock&&count===1){
-      Toastify({
+{{#if isEmpty}}
+<!--================Cart Area =================-->
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each cart}}
+                        <tr>
+                            <td>
+                                <div class="media">
+                                    <div class="d-flex">
+                                        <img src={{this.productDetails.images.[0]}} width="100px">
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="highlight">{{this.productDetails.name}}</div>
+                                        <br>
+                                        <div>Stocks left: <span class="highlight"
+                                                id="stock{{this.productDetails._id}}">{{this.productDetails.stock}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                            </td>
+                            <td>
+                                <h5>{{toLocaleString this.productDetails.offerPrice}}</h5>
+                            </td>
+                            <td>
+                                <div>
+                                    <span class="btn btn-dark"
+                                        onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',-1,'{{this.productDetails.offerPrice}}')"><i
+                                            class="fas fa-minus"></i></span>
+                                    <button class="btn btn-light" id="{{products.productId}}"
+                                        style="cursor: default;">{{products.quantity}}</button>
+                                    <span class="btn btn-primary"
+                                        onclick="changeQuantity('{{this._id}}','{{this.productDetails._id}}',1,'{{this.productDetails.offerPrice}}')"><i
+                                            class="fas fa-plus"></i></span>
+                                </div>
+                            </td>
+                            <td>
+                                <h5 class="{{products.productId}} subTotal">₹{{toLocaleString this.subTotal}}</h5>
+                            </td>
+                        </tr>
+                        {{/each}}
+                        <tr class="bottom_button">
+                            <td>
+                                <a class="gray_btn" href="#">Update Cart</a>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                <div class="cupon_text d-flex align-items-center">
+                                    <form id="applyCouponForm">
+                                        <button class="primary-btn" style="border: 0;" type="submit">Apply Coupon</button>
+                                        <input type="text" placeholder="Coupon Code" id="coupon" name="coupon" style="border: 1;">
+                                        <div class="alert alert-danger d-none mt-1" role="alert" id="coupon-alert">
+                                        </div>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                <h5>Grandtotal</h5>
+                            </td>
+                            <td>
+                                <h5 id="grandTotal">₹{{toLocaleString total}}</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                <h5>Discount</h5>
+                            </td>
+                            <td>
+                                <h5 id="discount">₹{{toLocaleString total}}</h5>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="checkout_btn_inner d-flex align-items-center justify-content-end">
+                    <a class="gray_btn" href="/">Continue Shopping</a>
+                    <a class="primary-btn checkout-button" href="/checkout">Proceed to checkout</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Cart Area =================-->
+{{else}}
+<div class="emptycart">
+    <img src="/img/emptycart.jpg" style="width: 500px;">
+</div>
+{{/if}}
+
+
+<script>
+    const applyCoupon = async (name) => {
+        try {
+            const res = await axios({
+                method: "POST", url: "/apply-coupon", data: { name }
+            })
+
+        } catch (err) {
+            document.getElementById('coupon-alert').classList.remove('d-none')
+            document.getElementById('coupon-alert').textContent = err.response.data.message;
+        }
+    }
+
+
+    $(document).ready(function () {
+        $("#applyCouponForm").validate({
+            errorClass: 'errors',
+            rules: {
+                coupon: {
+                    required: true,
+                },
+            },
+            messages: {
+                coupon: {
+                    required: "field required",
+                },
+            },
+            submitHandler: function () {
+                const coupon = document.getElementById('coupon').value;
+                applyCoupon(coupon);
+            }
+        });
+    });
+</script>
+
+
+
+
+<script>
+    const changeQuantity = async (cartId, productId, count, price) => {
+        const stock = parseInt(document.getElementById(`stock${productId}`).textContent)
+        price = parseInt(price)
+        const quantity = parseInt(document.getElementById(productId).textContent)
+        if (quantity >= stock && count === 1) {
+            Toastify({
                 text: "there is not enough stock for that",
                 duration: 3000,
-				gravity: "bottom",
+                gravity: "bottom",
                 position: "center",
-				 style: {
-                 background: "linear-gradient(to right, #fe6d00, #ffb900)",
-                  },
-	}).showToast();
-    }else{
-    try {
-      const res = await axios({
-        method: 'POST', url: '/change-product-quantity', data: {cartId,productId,count}
-      })
-      if(res.data.status==="removed"){
-        location.reload();
-      }else{
-        let currentQuantity=document.getElementById(productId)
-        currentQuantity.textContent=parseInt(currentQuantity.textContent)+count;
-       document.getElementsByClassName(productId)[0].innerHTML=`₹${((quantity+count)*price1).toLocaleString()}`
-       const total=document.querySelectorAll('.subTotal')
-        let sum=0;
-          for(i=0;i<total.length;i++){
-            sum=total[i].innerHTML.slice(1).replaceAll(',','')*1+sum;
+                style: {
+                    background: "linear-gradient(to right, #fe6d00, #ffb900)",
+                },
+            }).showToast();
+        } else {
+            try {
+                const res = await axios({
+                    method: 'POST', url: '/change-product-quantity', data: { cartId, productId, count }
+                })
+                if (res.data.status === "removed") {
+                    location.reload();
+                } else {
+                    let currentQuantity = document.getElementById(productId)
+                    currentQuantity.textContent = parseInt(currentQuantity.textContent) + count;
+                    document.getElementsByClassName(productId)[0].innerHTML = `₹${((quantity + count) * price).toLocaleString()}`
+                    const total = document.querySelectorAll('.subTotal')
+                    let sum = 0;
+                    for (i = 0; i < total.length; i++) {
+                        sum = total[i].innerHTML.slice(1).replaceAll(',', '') * 1 + sum;
+                    }
+                    document.getElementById('grandTotal').textContent = `₹${sum.toLocaleString()}`;
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
-        document.getElementById('grandTotal').textContent=`₹${sum.toLocaleString()}`;
-      }
-    } catch (err) {
-	   console.log(err);
-      }
     }
-  }
 
 </script>
