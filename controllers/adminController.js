@@ -31,10 +31,25 @@ module.exports = {
 
   // @desc render admin home page
   // @route / GET
-  renderHomePage: (req, res) => {
-    const dashboardClass = "active";
-    res.render("adminHome", { admin: true, dashboardClass });
+  renderHomePage:async (req, res) => {
+    try{
+      const dashboardClass = "active";
+      const [annualReport]=await orderService.getAnnualReport()
+      const [dailyReport]=await orderService.getDailyReport()
+      res.render("adminHome", { admin: true, dashboardClass,annualReport,dailyReport});
+    }catch(err){
+      console.log(err);
+    }
   },
+
+  getDashboardData:asyncHandler(async(req,res)=>{
+    const orderStatusCount=await orderService.getOrderStatusCount();
+    const salesPerMonth=await orderService.salesPerMonth()
+    res.json({
+      orderStatusCount,
+      salesPerMonth
+    })
+  }),
 
   // @desc render product management page
   // @route /product GET
@@ -281,15 +296,30 @@ module.exports = {
   },
 
   addCoupon: asyncHandler(async (req, res) => {
-    const { name, discount } = req.body;
+    const { name, discount,expiryDate } = req.body;
     const isCouponExist = await couponService.findOne(name)
     if (isCouponExist) {
       throw new AppError("there is already exist a coupon in this name", 401)
     }
-    await couponService.addCoupon(name, discount);
+    await couponService.addCoupon(name, discount, expiryDate);
     res.json({
       status: "success"
     })
   }),
+
+  renderSalesPage:async(req,res)=>{
+    let dateMatchQuery={}
+    let {start,end} =req.query;
+    start = new Date(start)
+    end = new Date(end)
+    if(req.query.start&&req.query.end){
+      dateMatchQuery={
+        date:{$gte:start,$lte:end}
+      }
+    }
+    const salesClass="active";
+    const sales=await orderService.getSales(dateMatchQuery)
+    res.render('adminSalesReport',{admin:true,salesClass,sales})
+  },
 
 };

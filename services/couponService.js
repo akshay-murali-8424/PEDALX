@@ -9,14 +9,20 @@ module.exports={
       return coupons
     }),
 
-    addCoupon:asyncHandler(async(name,discount)=>{
+    addCoupon:asyncHandler(async(name,discount,expiryDate)=>{
+        expiryDate=new Date(expiryDate)
+        const expiryMonth =expiryDate.getUTCMonth() + 1; //months from 1-12
+        const expiryDay =expiryDate.getUTCDate();
+        const expiryYear =expiryDate.getUTCFullYear();
+        const newExpiryDate = expiryDay + "/" + expiryMonth + "/" + expiryYear;
         discount=parseInt(discount)
         const date = new Date();
-        var month = date.getUTCMonth() + 1; //months from 1-12
-        var day = date.getUTCDate();
-        var year = date.getUTCFullYear();
-        var newdate = day + "/" + month + "/" + year;
-        await getDb().collection('coupons').insertOne({name,discount,date,createdOn:newdate})
+        const month = date.getUTCMonth() + 1; //months from 1-12
+        const day = date.getUTCDate();
+        const year = date.getUTCFullYear();
+        const newdate = day + "/" + month + "/" + year;
+        
+        await getDb().collection('coupons').insertOne({name,discount,date,createdOn:newdate,expiryDate,expiryDateOn:newExpiryDate,isExpired:false})
 
     }),
 

@@ -18,7 +18,7 @@ module.exports = {
         res.redirect('/admin/login');
     }
     } catch (err) {
-      console.log(err);
+      console.log(`abkdabajbbdjsakd${err}`)
     }
   },
 };

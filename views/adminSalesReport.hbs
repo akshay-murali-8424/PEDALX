@@ -1,0 +1,104 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<div class="container-fluid position-relative d-flex p-0">
+    <!-- Spinner Start -->
+    <div id="spinner"
+        class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+    {{>adminSideBar}}
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+            <a href="/admin" class="navbar-brand d-flex d-lg-none me-4">
+                <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+            </a>
+            <a href="#" class="sidebar-toggler flex-shrink-0">
+                <i class="fa fa-bars"></i>
+            </a>
+        </nav>
+        <!-- Navbar End -->
+        <div class="container">
+        
+                <div class="col-12 mt-5">
+                        <div class="bg-secondary rounded h-100 p-4">
+                            <h3 class="mb-4 text-dark">SALES</h3>
+                            <div class="mb-3 d-flex">
+                            <button class="btn btn-primary" onclick="ExportToExcel('xlsx')">Export to excel</button>
+                         <input class="ms-5" type="text" name="daterange" value="01/01/2022 - 12/01/2023" />
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table" id="salesTable"  name="salesTable">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Subtotal</th>
+                                            <th scope="col">Discounts</th>
+                                            <th scope="col">Revenue</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each sales}}
+                                        <tr style="color: black; font-weight:500">
+                                            <th scope="row">{{inc @index}}</th>
+                                            <td>{{this.orderedTime}}</td>
+                                            <td>{{this.products.name}}</td>
+                                            <td>{{this.products.quantity}}</td>
+                                            <td>₹{{toLocaleString this.products.offerPrice}}</td>
+                                            <td>₹{{toLocaleString this.products.subTotal}}</td>
+                                            <td>{{this.discount}}</td>
+                                            <td>₹{{toLocaleString this.products.afterCouponTotal}}</td>
+                                        </tr>
+                                       {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+        </div>
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+    <script>
+
+    $(document).ready( function () {
+    $('#salesTable').DataTable();
+     });
+
+
+    function ExportToExcel(type, fn, dl) {
+       var elt = document.getElementById('salesTable');
+       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+       return dl ?
+         XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+         XLSX.writeFile(wb, fn || ('MySheetName.' + (type || 'xlsx')));
+    }
+
+   
+$(function() {
+  $('input[name="daterange"]').daterangepicker({
+    opens: 'left'
+  }, function(start, end, label) {
+    console.log("A new date selection was made: " + start.format('DD-MM-YYYY') + ' to ' + end.format('DD-MM-YYYY'));
+    start=start.format('YYYY-MM-DD')
+    end=end.format('YYYY-MM-DD')
+    console.log(start,end)
+    location.assign(`/admin/sales-report?start=${start}&end=${end}`)
+  });
+});
+
+
+    </script>

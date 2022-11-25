@@ -82,7 +82,7 @@
                             </td>
                         </tr>
                         {{/each}}
-                        <tr class="bottom_button">
+                        {{!-- <tr class="bottom_button">
                             <td>
                                 <a class="gray_btn" href="#">Update Cart</a>
                             </td>
@@ -102,7 +102,7 @@
                                     </form>
                                 </div>
                             </td>
-                        </tr>
+                        </tr> --}}
                         <tr>
                             <td>
 
@@ -111,24 +111,10 @@
 
                             </td>
                             <td>
-                                <h5>Grandtotal</h5>
+                                <h5>total</h5>
                             </td>
                             <td>
-                                <h5 id="grandTotal">₹{{toLocaleString total}}</h5>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-
-                            </td>
-                            <td>
-
-                            </td>
-                            <td>
-                                <h5>Discount</h5>
-                            </td>
-                            <td>
-                                <h5 id="discount">₹{{toLocaleString total}}</h5>
+                                <h5 id="grandTotal" style="text-align: right;">₹{{toLocaleString total}}</h5>
                             </td>
                         </tr>
 
@@ -149,42 +135,6 @@
     <img src="/img/emptycart.jpg" style="width: 500px;">
 </div>
 {{/if}}
-
-
-<script>
-    const applyCoupon = async (name) => {
-        try {
-            const res = await axios({
-                method: "POST", url: "/apply-coupon", data: { name }
-            })
-
-        } catch (err) {
-            document.getElementById('coupon-alert').classList.remove('d-none')
-            document.getElementById('coupon-alert').textContent = err.response.data.message;
-        }
-    }
-
-
-    $(document).ready(function () {
-        $("#applyCouponForm").validate({
-            errorClass: 'errors',
-            rules: {
-                coupon: {
-                    required: true,
-                },
-            },
-            messages: {
-                coupon: {
-                    required: "field required",
-                },
-            },
-            submitHandler: function () {
-                const coupon = document.getElementById('coupon').value;
-                applyCoupon(coupon);
-            }
-        });
-    });
-</script>
 
 
 

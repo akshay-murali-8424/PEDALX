@@ -65,7 +65,7 @@ module.exports = {
                   $multiply: [
                       '$products.quantity', '$productDetails.offerPrice'
                   ]
-              }
+              },
           }
         }
       ])
@@ -87,11 +87,16 @@ module.exports = {
     console.log(result);
   }),
 
-  applyCoupon:asyncHandler(async(userId,couponId)=>{
+  applyCoupon:asyncHandler(async(userId,discount)=>{
     await getDb().collection('cart').updateOne({user: ObjectId(userId)},{
       $set:{
-        coupon:couponId
+        discount
       }
     })
+  }),
+
+  findOne:asyncHandler(async(userId)=>{
+    const cart= await getDb().collection('cart').findOne({user: ObjectId(userId)})
+    return cart;
   })
 };

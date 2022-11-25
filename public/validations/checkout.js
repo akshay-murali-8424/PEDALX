@@ -103,11 +103,12 @@ $(document).ready(function () {
 
 
 
-  const placeOrder = async (addressId, paymentMethod) => {
+  const placeOrder = async (addressId, paymentMethod,coupon) => {
     try {
       const res = await axios({
-        method: 'POST', url: '/checkout', data: { addressId, paymentMethod }
+        method: 'POST', url: '/checkout', data: { addressId, paymentMethod ,coupon}
       })
+      console.log(res)
       if (paymentMethod === "cod"||paymentMethod==="wallet") {
         location.assign('/success-order')
       } else if (paymentMethod === "razorpay") {
@@ -172,7 +173,9 @@ $(document).ready(function () {
     const addressId = document.querySelector('input[name="address"]:checked').value;
     const paymentMethod = document.querySelector('input[name="payment-option"]:checked').value;
 
-    placeOrder(addressId, paymentMethod);
+    const coupon=document.getElementById('couponDetails').value;
+
+    placeOrder(addressId, paymentMethod, coupon);
 
   })
 

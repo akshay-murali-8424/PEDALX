@@ -1,176 +1,209 @@
-
-    <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
-        <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-                <div class="col-first">
-                    <h1>Hello {{userDetail.name}}</h1>
-                    <nav class="d-flex align-items-center">
-                        <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="">Profile</a>
-                    </nav>
-                </div>
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Hello {{userDetail.name}}</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="">Profile</a>
+                </nav>
             </div>
         </div>
-    </section>
-    <!-- End Banner Area -->
+    </div>
+</section>
+<!-- End Banner Area -->
 
 <div class="container-xl px-4 mt-4">
     <!-- Account page navigation-->
     <nav class="nav nav-borders">
         <a class="nav-link active" href="/user-profile/{{userDetail._id}}">Profile</a>
         <a class="nav-link" href="/user-orders/{{userDetail._id}}">Orders</a>
-       <a class="nav-link" href="/user-addresses/{{userDetail._id}}"
-            >Addresses</a>
-        <a class="nav-link" href="/user-wallet/{{userDetail._id}}"
-            >Wallet</a>
+        <a class="nav-link" href="/user-addresses/{{userDetail._id}}">Addresses</a>
+        <a class="nav-link" href="/user-wallet/{{userDetail._id}}">Wallet</a>
     </nav>
     <hr class="mt-0 mb-4">
     <div class="row">
         <div class="col-xl-8 mx-auto d-flex justify-content-around">
+
+            {{#if userData.isGoogleSigned}}
+            <div class="card mb-5">
+                <img src="{{userData.picture}}"  style="border-radius: 67px; width: 43%; margin: auto; margin-top:30px">
+                <h6 style="MARGIN: auto;margin-top: 17px;">{{userData.name}}</h6>
+                <p class="title" style="padding: 19px;">{{userData.email}}</p>
+
+
+            </div>
+            {{else}}
             <!-- Account details card-->
             <div class="card mb-4 col-lg-5">
-                <div class="card-header">Personal Information &nbsp;&nbsp;<span class="editbtn" id="details-edit">edit</span></div>
+                <div class="card-header">Personal Information &nbsp;&nbsp;<span class="editbtn"
+                        id="details-edit">edit</span></div>
                 <div class="card-body">
                     <form id="personalDetails">
                         <fieldset disabled id="details-form">
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (first name)-->
-                            <div class="col-lg-6">
-                                <label class="small mb-1" for="name">Name</label>
-                                <input class="form-control" id="name" type="text" placeholder="Enter your name" value="{{userData.name}}" name="name" >
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-lg-6">
+                                    <label class="small mb-1" for="name">Name</label>
+                                    <input class="form-control" id="name" type="text" placeholder="Enter your name"
+                                        value="{{userData.name}}" name="name">
+                                </div>
+
                             </div>
-                           
-                        </div>
-                        <!-- Form Group (email address)-->
-                        <div class="mb-3">
-                            <label class="small mb-1" for="email">Email address</label>
-                            <input class="form-control" id="email" type="email" placeholder="Enter your email address" value="{{userData.email}}" name="email">
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-lg-12">
-                                <label class="small mb-1" for="phoneno">Phone number</label>
-                                <input class="form-control" id="phoneno" type="number" placeholder="Enter your phone number" value="{{userData.phoneno}}" name="phoneno">
+                            <!-- Form Group (email address)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" for="email">Email address</label>
+                                <input class="form-control" id="email" type="email"
+                                    placeholder="Enter your email address" value="{{userData.email}}" name="email">
                             </div>
-                        </div>
-                        <!-- Save changes button-->
-                        <button class="btn btn-primary" type="submit">Update</button>
-   <div class="alert mt-2" style="color: rgb(173, 32, 32);">
-									
-								</div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (phone number)-->
+                                <div class="col-lg-12">
+                                    <label class="small mb-1" for="phoneno">Phone number</label>
+                                    <input class="form-control" id="phoneno" type="number"
+                                        placeholder="Enter your phone number" value="{{userData.phoneno}}"
+                                        name="phoneno">
+                                </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-primary" type="submit">Update</button>
+                            <div class="alert mt-2" style="color: rgb(173, 32, 32);">
+
+                            </div>
                         </fieldset>
                     </form>
                 </div>
             </div>
+            {{/if}}
+
+
+
+            {{#if userData.isGoogleSigned}}
+            {{else}}
             <!-- change password card-->
             <div class="card mb-4 col-lg-5">
-                <div class="card-header">Change password  &nbsp;&nbsp;<span class="editbtn" id="edit-password">edit</span></div>
+                <div class="card-header">Change password &nbsp;&nbsp;<span class="editbtn"
+                        id="edit-password">edit</span></div>
                 <div class="card-body">
                     <form id="changePassword">
                         <fieldset disabled id="edit-password-form">
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
 
-                            <div class="col-lg-12">
-                                <label class="small mb-1" for="currentPassword">Current password</label>
-                                <input class="form-control" id="currentPassword" type="password" placeholder="Current password" name="currentPassword">
+                                <div class="col-lg-12">
+                                    <label class="small mb-1" for="currentPassword">Current password</label>
+                                    <input class="form-control" id="currentPassword" type="password"
+                                        placeholder="Current password" name="currentPassword">
+                                </div>
+
                             </div>
-                           
-                        </div>
-                       
-                        <div class="mb-3">
-                            <label class="small mb-1" for="newPassword">New password</label>
-                            <input class="form-control" id="newPassword" type="password" placeholder="New password" name="newPassword">
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                        
-                            <div class="col-lg-12">
-                                <label class="small mb-1" for="confirmPassword">Confirm password</label>
-                                <input class="form-control" id="confirmPassword" type="password" placeholder="Confirm password" name="confirmPassword">
+
+                            <div class="mb-3">
+                                <label class="small mb-1" for="newPassword">New password</label>
+                                <input class="form-control" id="newPassword" type="password" placeholder="New password"
+                                    name="newPassword">
                             </div>
-                        </div>
-                        <!-- Save changes button-->
-                        <button class="btn btn-primary" type="submit">Save changes</button>
-                        <div class="alertpass mt-2" style="color: rgb(173, 32, 32);">
-									
-								</div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+
+                                <div class="col-lg-12">
+                                    <label class="small mb-1" for="confirmPassword">Confirm password</label>
+                                    <input class="form-control" id="confirmPassword" type="password"
+                                        placeholder="Confirm password" name="confirmPassword">
+                                </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-primary" type="submit">Save changes</button>
+                            <div class="alertpass mt-2" style="color: rgb(173, 32, 32);">
+
+                            </div>
                         </fieldset>
                     </form>
                 </div>
             </div>
+            {{/if}}
+
         </div>
     </div>
 </div>
 
 <style>
     .img-account-profile {
-    height: 10rem;
-}
-.rounded-circle {
-    border-radius: 50% !important;
-}
-.card {
-    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
-}
-.card .card-header {
-    font-weight: 500;
-}
-.card-header:first-child {
-    border-radius: 0.35rem 0.35rem 0 0;
-}
-.card-header {
-    padding: 1rem 1.35rem;
-    margin-bottom: 0;
-    background-color: rgba(33, 40, 50, 0.03);
-    border-bottom: 1px solid rgba(33, 40, 50, 0.125);
-}
-.form-control, .dataTable-input {
-    display: block;
-    width: 100%;
-    padding: 0.875rem 1.125rem;
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1;
-    color: #69707a;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #c5ccd6;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border-radius: 0.35rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
+        height: 10rem;
+    }
 
-.nav-borders .nav-link.active {
-    color: #fd8900;
-    border-bottom-color: #fd8900;
-}
-.nav-borders .nav-link {
-    color: #69707a;
-    border-bottom-width: 0.125rem;
-    border-bottom-style: solid;
-    border-bottom-color: transparent;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: 1rem;
-    margin-right: 1rem;
-}
-.nav{
-    justify-content: center;
-}
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
 
-.editbtn{
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-}
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+    .card .card-header {
+        font-weight: 500;
+    }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .form-control,
+    .dataTable-input {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #fd8900;
+        border-bottom-color: #fd8900;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .nav {
+        justify-content: center;
+    }
+
+    .editbtn {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 </style>
 
 <script src="/validations/editProfile.js"></script>

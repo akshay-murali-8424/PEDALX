@@ -33,6 +33,7 @@
                                 <th scope="col">Coupon</th>
                                 <th scope="col">Discount</th>
                                 <th scope="col">Created On</th>
+                                <th scope="col">Expire On</th>
                                 <th scope="col">Handle</th>
                             </tr>
                         </thead>
@@ -43,6 +44,7 @@
                                 <td>{{this.name}}</td>
                                 <td>{{this.discount}}%</td>
                                 <td>{{this.createdOn}}</td>
+                                <td>{{this.expiryDateOn}}</td>
                                 <td><button><i class="fas fa-edit"></i></button> 
                                 <button> <i class="fas fa-trash"></i></button> </td>
                             </tr>
@@ -75,6 +77,11 @@
                                 <label for="recipient-name" class="col-form-label">Discount</label>
                                 <input type="number" class="form-control" id="discount" name="discount">
                             </div>
+                            <div class="mb-1">
+                                <label for="date" class="col-form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate">
+                            </div>
+
                         </div>
                         <div id="duplicateAlert" class="ms-2" style="color: rgb(173, 32, 32);">
 						</div>
@@ -96,10 +103,10 @@
 <script>
    
    
-       const addCoupon=async(name,discount)=>{
+       const addCoupon=async(name,discount,expiryDate)=>{
         try{
            const res=await axios({
-            method:'POST', url:'/admin/add-coupon', data:{name,discount}
+            method:'POST', url:'/admin/add-coupon', data:{name,discount,expiryDate}
            })
            location.reload()
         }catch(err){
@@ -118,6 +125,9 @@
                     discount: {
                         required: true,
                         max:99
+                    },
+                    expiryDate:{
+                        required:true
                     }
                 },
                 messages: {
@@ -130,12 +140,15 @@
                         required: "Please enter discount",
                         max:"the maximum is 99"
                     },
+                    expiryDate:{
+                        required:"please enter the date"
+                    }
                 },
                 submitHandler: function () {
                     const name=document.getElementById('coupon').value
                     const discount=document.getElementById('discount').value
-                    addCoupon(name, discount);
-
+                    const expiryDate=document.getElementById('expiryDate').value
+                    addCoupon(name, discount, expiryDate);
                 }
             });
         });

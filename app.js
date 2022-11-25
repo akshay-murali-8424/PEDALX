@@ -84,10 +84,14 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   err.statusCode = err.statusCode || 500;
   err.status= err.status || 'error';
+  if(err.statusCode===404){
+   res.render('error',{errors:err.status,errorMessage:err.message})
+  }else{
   res.status (err.statusCode) .json({
   status: err.status,
   message: err.message
   })
+}
 });
 
 app.listen(process.env.PORT, function(err){

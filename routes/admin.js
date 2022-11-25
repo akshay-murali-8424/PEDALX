@@ -34,6 +34,8 @@ router.route('/login')
 //@desc admin home page 
 router.get('/',adminAuth.adminAuthentication,adminController.renderHomePage)
 
+router.get('/getDashboardData',adminAuth.adminAuthentication,adminController.getDashboardData)
+
 //@desc admin product management
 router.get('/product',adminAuth.adminAuthentication,adminController.renderProductPage);
 
@@ -89,5 +91,9 @@ router.patch('/edit-category-offer',adminAuth.adminAuthentication,adminControlle
 router.get('/coupons',adminAuth.adminAuthentication,adminController.renderCouponsPage)
 
 router.post('/add-coupon',adminAuth.adminAuthentication,adminController.addCoupon)
+
+router.get('/sales-report',adminAuth.adminAuthentication,adminController.renderSalesPage)
+
+router.get('/logout',adminAuth.adminAuthentication,authController.adminLogOut)
 
 module.exports = router;

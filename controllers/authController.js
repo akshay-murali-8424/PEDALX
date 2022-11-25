@@ -7,10 +7,12 @@ const bcrypt = require("bcryptjs");
 const userService = require("../services/userService");
 const mongodb = require("mongodb");
 const walletService = require("../services/walletService");
+const { OAuth2Client } = require('google-auth-library');
 const client = require("twilio")(
   process.env.TWILIO_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
+
 
 module.exports = {
   // @desc verify admin login
@@ -83,8 +85,8 @@ module.exports = {
   verifyUserLogin: asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await userService.findExistingEmail(email);
-    if(user.isBlocked){
-      throw new AppError("this user is blocked by the company",401)
+    if (user.isBlocked) {
+      throw new AppError("this user is blocked by the company", 401)
     }
     if (user) {
       const userId = mongodb.ObjectId(user._id);
@@ -104,10 +106,10 @@ module.exports = {
           message: "success",
         });
       } else {
-        throw new AppError("Sorry, your password was incorrect. Please double-check your password",401)
+        throw new AppError("Sorry, your password was incorrect. Please double-check your password", 401)
       }
     } else {
-      throw new AppError("this account doesn't exist",401);
+      throw new AppError("this account doesn't exist", 401);
     }
   }),
 
@@ -150,8 +152,7 @@ module.exports = {
         });
       console.log(data.status)
       if (data.status == "approved") {
-        const user =await userService.findExistingPhoneno(req.body.phoneno);
-        console.log({ user });
+        const user = await userService.findExistingPhoneno(req.body.phoneno);
         const userId = mongodb.ObjectId(user._id);
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
           expiresIn: "2d",
@@ -183,9 +184,65 @@ module.exports = {
 
   userLogout: (req, res) => {
     res.cookie('userjwt', 'loggedout', {
-      expiresIn: new Date(Date.now()),
+      maxAge: 1,
       httpOnly: true
     })
     res.redirect('/');
+  },
+
+  adminLogOut: (req, res) => {
+    res.cookie('adminjwt', 'loggedout', {
+      maxAge: 1,
+      httpOnly: true
+    })
+    res.redirect('/admin');
+  },
+
+  signUpWithGoogle:async (req, res) => {
+    try{
+      const { userJwt } = req.body;
+      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+      const ticket = await client.verifyIdToken({
+        idToken: userJwt,
+        audience: process.env.GOOGLE_CLIENT_ID,  
+      });
+      const payload = ticket.getPayload();
+      const {email,given_name:name,picture}=payload
+      const isUserExist=await userService.findExistingEmail(email)
+      if(isUserExist){
+        const userId = mongodb.ObjectId(isUserExist._id);
+          const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "2d",
+          });
+          res.cookie("userjwt", token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            maxAge: 24 * 60 * 60 * 1000,
+          });
+          res.json({
+            status: "success",
+            message: "success",
+          });
+      }else{
+      const user=await userService.addUserGoogle(name,email,picture)
+      const token = jwt.sign({ userId: user.insertedId }, process.env.JWT_SECRET, {
+        expiresIn: "2d",
+      });
+      res.cookie("userjwt", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      await walletService.createWallet(user.insertedId)
+      res.json({
+        status: "success",
+        message: "success",
+      });
+    }
+    }catch(err){
+      console.log(err)
+    }
   }
 };

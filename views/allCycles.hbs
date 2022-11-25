@@ -186,9 +186,6 @@ function sort() {
     let params = new URLSearchParams(url.search);
     params.set('sort', selectedValue);
     let newParams = params.toString();
-    
-    
-    
    location.href = window.location.protocol + "//" + window.location.host + '/cycles?' + newParams;
   }
 
@@ -198,9 +195,6 @@ function sort() {
     let params = new URLSearchParams(url.search);
     params.set('p', value);
     let newParams = params.toString();
-    
-    
-    
    location.href = window.location.protocol + "//" + window.location.host + '/cycles?' + newParams;
   }
 

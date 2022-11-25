@@ -1,5 +1,6 @@
 <style>
-  .add-address-btn, .apply-coupon-btn {
+  .add-address-btn,
+  .apply-coupon-btn {
     height: 38px;
     border-radius: 6px;
     border: 0;
@@ -27,8 +28,24 @@
 <!--================Checkout Area =================-->
 <section class="checkout_area section_gap">
   <div class="container">
+    <div class="cupon_area">
+      <div class="check_title">
+        <div class="alert alert-success coupon-applied-alert d-none" role="alert">
+          Coupon Applied
+        </div>
+        <div class="alert alert-danger d-none" role="alert" id="coupon-alert">
+        </div>
+      </div>
+      <form id="applyCouponForm">
+        <input type="text" placeholder="Enter coupon code" name="coupon" id="coupon">
+        <br>
+        <button class="primary-btn apply-coupon-btn">Apply Coupon</button>
+      </form>
+      <input type="text" class="d-none" id="couponDetails" value="0">
+    </div>
     <div class="billing_details">
       <div class="row">
+
         <div class="col-lg-8">
           <h3>Select an address</h3>
           <form class="contact_form" action="#" method="post" novalidate="novalidate">
@@ -60,7 +77,9 @@
               {{/each}}
             </ul>
             <ul class="list list_2">
-              <li><a href="#">Grandtotal <span>₹{{toLocaleString total}}</span></a></li>
+              <li><a>Total <span id="total">₹{{toLocaleString total}}</span></a></li>
+              <li><a>Discount<span id="discount">-₹0</span></a></li>
+              <li><a>GrandTotal <span id="grandTotal">₹{{toLocaleString total}}</span></a></li>
             </ul>
             <div class="payment_item">
               <div class="radion_btn">
@@ -81,7 +100,7 @@
               <div class="radion_btn">
                 <input type="radio" id="f" name="payment-option" value="paypal">
                 <label for="f">Paypal </label>
-        
+
                 <div class="check"></div>
               </div>
 
@@ -91,7 +110,7 @@
               <div class="radion_btn">
                 <input type="radio" id="f8" name="payment-option" value="wallet">
                 <label for="f8">Wallet</label>
-        
+
                 <div class="check"></div>
               </div>
 
@@ -101,7 +120,7 @@
               Please select an payment method to place order
             </div>
             <a class="primary-btn" id="proceed">Place Order</a>
-    
+
           </div>
         </div>
       </div>
@@ -161,6 +180,62 @@
   </div>
 </div>
 
+<script>
+  const applyCoupon = async (name) => {
+    try {
+      const res = await axios({
+        method: "POST", url: "/apply-coupon", data: { name }
+      })
+      const total=document.getElementById('total').textContent.slice(1).replaceAll(',', '') * 1 ;
+      console.log(total)
+      let discount=0;
+      console.log(res.data.percentage)
+      discount=total*(res.data.percentage/100)
+      const grandTotal=total-discount;
+      document.getElementById('couponDetails').value=name;
+      document.getElementById('discount').textContent=`-₹${discount.toLocaleString()}`
+      document.getElementById('grandTotal').textContent=`₹${grandTotal.toLocaleString()}`
+      document.getElementById('coupon-alert').classList.add('d-none')
+      document.querySelector('.coupon-applied-alert').classList.remove('d-none')
+     Toastify({
+      text: `Coupon Applied`,
+      duration: 3000,
+      gravity: "bottom",
+      position: "center",
+      style: {
+        background: "linear-gradient(to right, #fe6d00, #ffb900)",
+      },
+      
+    }).showToast();
+
+    } catch (err) {
+      document.getElementById('coupon-alert').classList.remove('d-none')
+      document.getElementById('coupon-alert').textContent = err.response.data.message;
+    }
+  }
+
+
+  $(document).ready(function () {
+    $("#applyCouponForm").validate({
+      errorClass: 'errors',
+      rules: {
+        coupon: {
+          required: true,
+        },
+      },
+      messages: {
+        coupon: {
+          required: "field required",
+        },
+      },
+      submitHandler: function () {
+        const coupon = document.getElementById('coupon').value;
+        applyCoupon(coupon);
+      }
+    });
+  });
+
+</script>
 
 
 <script src="/validations/checkout.js"></script>

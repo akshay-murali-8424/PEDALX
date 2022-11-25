@@ -1,3 +1,8 @@
+<style>
+	iframe{
+		display: initial !important;
+	}
+</style>
 
 	<!--================Login Box Area =================-->
 	<section class="login_box_area section_gap mt-5">
@@ -34,6 +39,11 @@
 							</div>
 						</form>
 						<a href="/login-with-otp"><button class="primary-btn mb-2" style="border: none;">Log In with OTP</button></a>
+                        
+
+		 <div id="buttonDiv" class="mt-4"></div> 
+
+
 					</div>
 				</div>
 			</div>
@@ -41,6 +51,35 @@
 	</section>
 	
 <script src="/validations/userLogin.js"></script>
+
+<script>
+	 async function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+		const userJwt=response.credential
+        try{
+           const res = await axios({
+            method: 'POST', url: '/sign-up-with-google', data: { userJwt }
+          })
+		  location.assign('/')
+		}catch(err){
+			console.log(err)
+		}
+           
+        }
+
+
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "662197109050-mtcmgfon78p4qpqfa4oto0rimlisievo.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large" }  // customization attributes
+          );
+          google.accounts.id.prompt(); // also display the One Tap dialog
+        }
+</script>
 
 
 	

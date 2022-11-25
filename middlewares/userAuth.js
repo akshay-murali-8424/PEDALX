@@ -5,6 +5,7 @@ const brandHelper = require("../services/brandService");
 const categoryHelper = require("../services/categoryService");
 const userHelper = require("../services/userService");
 
+
 module.exports = {
   userPermission: async (req, res, next) => {
     try {
@@ -15,6 +16,13 @@ module.exports = {
       );
       if(isLoggedIn){
         const userData=await userHelper.findUserForToken(isLoggedIn.userId);
+        if(userData.isBlocked){
+          res.cookie('userjwt', 'loggedout', {
+            expiresIn: new Date(Date.now()),
+            httpOnly: true
+          })
+          res.redirect('/');
+        }
         req.user=userData;
         return next();
       }else{
@@ -66,6 +74,13 @@ module.exports = {
       );
       if(isLoggedIn){
         const userData=await userHelper.findUserForToken(isLoggedIn.userId);
+        if(userData.isBlocked){
+          res.cookie('userjwt', 'loggedout', {
+            expiresIn: new Date(Date.now()),
+            httpOnly: true
+          })
+          res.redirect('/');
+        }
         req.user=userData;
         return next();
       }else{

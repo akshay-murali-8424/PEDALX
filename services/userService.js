@@ -22,8 +22,15 @@ module.exports={
 
     }),
 
+    addUserGoogle:asyncHandler(async(name,email,picture)=>{
+      const isBlocked=false;
+      const isGoogleSigned=true;
+      const user = await getDb().collection('userData').insertOne({name,email,isBlocked,isGoogleSigned,picture})
+      return user;
+    }),
+
     findUserForToken:asyncHandler(async(id)=>{
-        const [user]=await getDb().collection('userData').find({_id:ObjectId(id)}).project({name:1}).toArray();
+        const [user]=await getDb().collection('userData').find({_id:ObjectId(id)}).project({name:1,isBlocked:1}).toArray();
         return user;
     }),
 

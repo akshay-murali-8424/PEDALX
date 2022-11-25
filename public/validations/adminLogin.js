@@ -6,7 +6,6 @@
       })
   
       location.assign('/admin')
-  
     } catch (err) {
       document.querySelector('.alert').textContent = "invalid credentials";
     }

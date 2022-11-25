@@ -18,6 +18,8 @@ router.route('/login-with-otp')
 .get(userController.renderLoginWithOtp)
 .post(authController.sendOtp)
 
+router.post('/sign-up-with-google',authController.signUpWithGoogle)
+
 router.post('/submit-otp',authController.submitOtp);
 
 router.route('/register')
@@ -71,7 +73,7 @@ router.get('/user-orders/:id',userAuth.userPermission,userController.renderUserO
 
 router.post('/cancel-order/:id',userAuth.userPermission,userController.cancelOrder)
 
-router.get('/return-order/:id',userAuth.userPermission,userController.returnOrder)
+router.get('/return-order',userAuth.userPermission,userController.returnOrder)
 
 router.get('/user-addresses/:id',userAuth.userPermission,userController.renderUserAddresses)
 
@@ -90,5 +92,8 @@ router.get('/success',userAuth.userPermission,userController.paypalSuccess)
 router.get('/cancel',userController.paypalCancel)
 
 router.post('/apply-coupon',userAuth.userPermission,userController.applyCoupon)
+
+router.get('/get-invoice/:id',userAuth.userPermission,userController.getInvoice)
+
 
 module.exports = router;
