@@ -95,5 +95,8 @@ router.post('/apply-coupon',userAuth.userPermission,userController.applyCoupon)
 
 router.get('/get-invoice/:id',userAuth.userPermission,userController.getInvoice)
 
+router.post('/post-review',userAuth.userPermission,userController.postReview)
+
+router.post('/search',userController.search)
 
 module.exports = router;

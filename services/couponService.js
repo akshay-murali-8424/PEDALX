@@ -5,7 +5,7 @@ const { ObjectId } = require("mongodb");
 module.exports={
 
     findAll:asyncHandler(async()=>{
-      const coupons=await getDb().collection('coupons').find().sort({date:-1}).toArray()
+      const coupons=await getDb().collection('coupons').find({isExpired:false}).sort({date:-1}).toArray()
       return coupons
     }),
 
@@ -40,5 +40,27 @@ module.exports={
     checkUsedCoupon:asyncHandler(async(userId,couponId)=>{
        const coupon=await getDb().collection('coupons').findOne({_id: ObjectId(couponId),users:ObjectId(userId)})
        return coupon;
+    }),
+
+    deleteCoupon:asyncHandler(async(couponId)=>{
+        await getDb().collection('coupons').updateOne({_id:ObjectId(couponId)},{
+            $set:{
+                isExpired:true
+            }
+        })
+    }),
+
+    updateCoupon:asyncHandler(async(couponId,name,discount,expiryDate)=>{
+      expiryDate=new Date(expiryDate)
+      const expiryDateOn=expiryDate.toLocaleDateString('en-in', { day: 'numeric' , month: 'numeric' ,year: 'numeric'})
+      await getDb().collection('coupons').updateOne({_id:ObjectId(couponId)},{
+        $set:{
+            name,
+            discount,
+            expiryDate,
+            expiryDateOn
+        }
+      })
     })
+
 }

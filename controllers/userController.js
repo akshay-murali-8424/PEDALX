@@ -15,15 +15,23 @@ const puppeteer=require('puppeteer')
 const hbs = require('hbs')
 const path = require('path')
 const { readFile } = require("fs/promises");
+const reviewService = require("../services/reviewService");
+const colors=require('colors')
 
 
 module.exports = ({
-  renderHomePage: (req, res) => {
-    res.render("index", { user: true })
+  renderHomePage: async (req, res) => {
+    const newArrivals=await productService.getNewArrivals()
+    res.render("index", { user: true, newArrivals})
   },
 
   renderLoginPage: (req, res) => {
-    res.render("userLogin", { user: true });
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    if(req.user){
+      res.redirect('/')
+    }else{
+      res.render("userLogin", { user: true });
+    }
   },
 
   renderLoginWithOtp: (req, res) => {
@@ -38,7 +46,7 @@ module.exports = ({
     try {
       const limit = 6
       let isSort = true;
-      let dbQuery = {};
+      let dbQuery = {isDeleted:{$ne:true}};
       let pageNo
       let sortOrder = {};
       if (req.query?.p) {
@@ -47,10 +55,10 @@ module.exports = ({
         pageNo = 0
       }
       if (req.query.categoryId) {
-        dbQuery = { category: ObjectId(req.query.categoryId) }
+        dbQuery.category=ObjectId(req.query.categoryId) 
       }
       if (req.query.brandId) {
-        dbQuery = { brand: ObjectId(req.query.brandId) }
+        dbQuery.brand=ObjectId(req.query.brandId) 
       }
       if (req.query?.sort) {
         const sort = parseInt(req.query.sort)
@@ -83,8 +91,23 @@ module.exports = ({
 
   renderViewProduct: async (req, res) => {
     const productId = req.params.id;
-    const product = await productService.findProduct(productId);
-    res.render("viewProduct", { user: true, product });
+    const [product,reviews] = await Promise.all([
+      productService.findProduct(productId),
+      reviewService.getReviews(productId)])
+    let isPurchasedProduct=false;
+    let isUserAlreadyReviewed=false;
+    let isEligibleToReview=false;
+    if(req.user){
+        [isPurchasedProduct,isUserAlreadyReviewed] = await Promise.all([
+        orderService.isPurchasedProduct(req.user._id,productId),
+        reviewService.isUserAlreadyReviewed(req.user._id,productId)
+      ])
+    }
+    console.log(isPurchasedProduct,isUserAlreadyReviewed)
+    if(isPurchasedProduct&&!isUserAlreadyReviewed){
+      isEligibleToReview=true;
+    }
+    res.render("viewProduct", { user: true, product, isEligibleToReview,reviews});
   },
 
   renderCartPage: async (req, res) => {
@@ -200,7 +223,14 @@ module.exports = ({
         products.afterCouponTotal = products.subTotal
       }
     }) 
-    const orderDetails = await orderService.placeOrder(req.user._id, address, products, total, discountInPercentage, discountedTotal, paymentMethod, couponDetails)
+    const scratchReward = Math.floor(Math.random()* 10);
+    res.cookie("reward", scratchReward, {
+      httpOnly: true,
+      sameSite: false,
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    const orderDetails = await orderService.placeOrder(req.user._id, address, products, total, discountInPercentage, discountedTotal, paymentMethod, couponDetails,scratchReward)
     const orderId = orderDetails.insertedId;
     if (paymentMethod === "cod") {
       await Promise.all(
@@ -214,6 +244,7 @@ module.exports = ({
         status: "success",
         message: "order placed"
       })
+      
     } else if (paymentMethod === "razorpay") {
       const razorResponse = await razorpay.generateRazorpay(orderId, discountedTotal);
       const userData = await userService.getUser(req.user._id)
@@ -257,11 +288,12 @@ module.exports = ({
         message: "order placed"
       })
     }
-
+    await walletService.refundToWallet(req.user._id,scratchReward,`reward for order ${orderId}`)
   }),
 
   renderWishlist: async (req, res) => {
     const [wishlist] = await wishlistService.getWishlist(req.user._id);
+    console.log(wishlist);
     res.render('wishlist', { user: true, wishlist, isEmpty: wishlist.products.length })
   },
 
@@ -391,8 +423,9 @@ module.exports = ({
       )
       if (!order.paymentMethod === "cod") {
         const status = `refunded for cancellation of the order ${orderId}`
-        await walletService.refundToWallet(req.user._id, order.discountedTotal, status)
+        await walletService.refundToWallet(req.user._id, order.discountedTotal,status)
       }
+      
       res.redirect('back')
     } catch (err) {
       console.log(err);
@@ -466,7 +499,8 @@ module.exports = ({
 
   renderSuccessOrder: (req, res) => {
     const userId = req.user._id;
-    res.render('successOrder', { user: true, userId })
+    const reward = req.cookies.reward;
+    res.render('successOrder', { user: true, userId, reward })
   },
 
   renderUserWallet: async (req, res) => {
@@ -543,7 +577,16 @@ module.exports = ({
           `${templateName}.hbs`
         );
         const html = await readFile(filePath, "utf-8");
-
+        hbs.registerHelper('toLocaleString', function(number) {
+          try{
+            return number?.toLocaleString()
+          }catch(err){
+            
+          }
+        })
+        hbs.registerHelper("inc",(value)=>{
+          return parseInt(value)+1;
+        })
         return hbs.compile(html)(data);
       };
       //creating puppeteer
@@ -572,6 +615,23 @@ module.exports = ({
       console.log(err)
     }
 
-  }
+  },
+
+  postReview:asyncHandler(async(req,res)=>{
+    const {productId, rating, review}=req.body;
+    await reviewService.postReview(productId,rating,review,req.user._id)
+    res.json({
+      status:"success",
+    })
+  }),
+
+
+  search:asyncHandler(async(req,res)=>{
+    let payload=req.body.e.trim()
+    let search=await productService.searchProduct(payload)
+    res.json({
+      search
+    })
+  }),
 
 })

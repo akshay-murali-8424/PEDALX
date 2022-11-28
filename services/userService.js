@@ -25,7 +25,7 @@ module.exports={
     addUserGoogle:asyncHandler(async(name,email,picture)=>{
       const isBlocked=false;
       const isGoogleSigned=true;
-      const user = await getDb().collection('userData').insertOne({name,email,isBlocked,isGoogleSigned,picture})
+      const user = await getDb().collection('userData').insertOne({name,email,isBlocked,isGoogleSigned,picture,phoneno:"nil"})
       return user;
     }),
 

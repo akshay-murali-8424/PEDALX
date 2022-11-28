@@ -5,6 +5,11 @@ const asyncHandler = require("express-async-handler");
 module.exports={
     findAll:asyncHandler( async()=>{
         const products=await getDb().collection('products').aggregate([
+          {
+            $match:{
+              isDeleted:{$ne:true}
+            }
+          },
             {
                 $lookup:{
                     from:"category",
@@ -29,7 +34,8 @@ module.exports={
     addProduct:asyncHandler(async (name,description,price,category,brand,stock,images)=>{
         price=parseInt(price)
         stock=parseInt(stock)
-        await getDb().collection('products').insertOne({name,description,price,offerPrice:price,category:ObjectId(category),brand:ObjectId(brand),stock,images})
+        const launchedDate=new Date()
+        await getDb().collection('products').insertOne({name,description,price,offerPrice:price,category:ObjectId(category),brand:ObjectId(brand),stock,images,launchedDate})
     }),
 
     findProduct:asyncHandler(async(id)=>{
@@ -139,5 +145,42 @@ module.exports={
     findAllInCategory:asyncHandler(async(dbQuery)=>{
        const products=await getDb().collection('products').find(dbQuery).toArray();
        return products;
+    }),
+
+    deleteProduct:asyncHandler(async(productId)=>{
+      await getDb().collection('products').updateOne({_id:ObjectId(productId)},{
+        $set:{
+          isDeleted:true,
+          stock:0
+        }
+      })
+    }),
+
+    deleteProductsInCategory:asyncHandler(async(categoryId)=>{
+      await getDb().collection('products').updateMany({category:ObjectId(categoryId)},{
+        $set:{
+          isDeleted:true,
+          stock:0
+        }
+      })
+    }),
+    
+    deleteProductsInBrand:asyncHandler(async(brandId)=>{
+      await getDb().collection('products').updateMany({brand:ObjectId(brandId)},{
+        $set:{
+          isDeleted:true,
+          stock:0
+        }
+      })
+    }),
+
+    getNewArrivals:asyncHandler(async()=>{
+      const newArrivals=await getDb().collection('products').find({isDeleted:{$ne:true}}).limit(4).sort({launchedDate:-1}).toArray()
+      return newArrivals
+    }),
+
+    searchProduct:asyncHandler(async(payload)=>{
+      const products=await getDb().collection('products').find({name:{$regex:`.*${payload}.*`,$options:'i'}}).toArray()
+      return products
     })
 }

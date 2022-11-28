@@ -22,7 +22,7 @@
         <!-- Navbar End -->
 
         <div class="container mt-5 mx-auto">
-           <div class="row gap-3 ms-5">
+            <div class="row gap-3 ms-5">
                 <div class="col-8 bg-white" style="border-radius: 11px;">
                     <h6 class="mb-4"><button class="btn btn-primary mt-3" data-bs-toggle="modal"
                             data-bs-target="#addcouponmodal">Add Coupon</button></h6>
@@ -38,15 +38,60 @@
                             </tr>
                         </thead>
                         <tbody>
-                              {{#each coupons}}
+                            {{#each coupons}}
                             <tr>
                                 <th scope="row">{{inc @index}}</th>
                                 <td>{{this.name}}</td>
                                 <td>{{this.discount}}%</td>
                                 <td>{{this.createdOn}}</td>
                                 <td>{{this.expiryDateOn}}</td>
-                                <td><button><i class="fas fa-edit"></i></button> 
-                                <button> <i class="fas fa-trash"></i></button> </td>
+                                <td><button data-bs-toggle="modal" data-bs-target="#hui{{inc @index}}"><i
+                                            class="fas fa-edit"></i></button>
+
+                                    {{!-- edit modal --}}
+                                    <div class="modal fade" id="hui{{inc @index}}" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"
+                                                        style="color: black;">Edit Coupon</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form id="categoryEdit" action="/admin/edit-coupon/{{this._id}}" method="post">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="recipient-name" class="col-form-label">Coupon
+                                                                Name</label>
+                                                            <input type="text" class="form-control" id="eName"
+                                                                value="{{this.name}}" name="name">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="recipient-name"
+                                                                class="col-form-label">Discount</label>
+                                                            <input type="number" class="form-control" id="eDiscount"
+                                                                name="discount" value="{{this.discount}}">
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <label for="date" class="col-form-label">Expiry Date</label>
+                                                            <input type="date" class="form-control" id="eExpiryDate"
+                                                                name="expiryDate" value="{{dateFormatChange this.expiryDateOn}}">
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a href="/admin/delete-coupon?id={{this._id}}"><button> <i class="fas fa-trash"></i></button></a> 
+                                </td>
                             </tr>
                             {{/each}}
 
@@ -56,8 +101,8 @@
             </div>
         </div>
 
-        {{!-- add coupon modal  --}} 
-         <div class="modal fade" id="addcouponmodal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        {{!-- add coupon modal --}}
+        <div class="modal fade" id="addcouponmodal" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -67,7 +112,7 @@
                     </div>
                     <form id="addCouponForm">
                         <div class="modal-body">
-                           
+
 
                             <div class="mb-3">
                                 <label for="coupon" class="col-form-label">Coupon</label>
@@ -84,12 +129,12 @@
 
                         </div>
                         <div id="duplicateAlert" class="ms-2" style="color: rgb(173, 32, 32);">
-						</div>
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Add</button>
                         </div>
-                        
+
                     </form>
                 </div>
             </div>
@@ -100,56 +145,56 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-<script>
-   
-   
-       const addCoupon=async(name,discount,expiryDate)=>{
-        try{
-           const res=await axios({
-            method:'POST', url:'/admin/add-coupon', data:{name,discount,expiryDate}
-           })
-           location.reload()
-        }catch(err){
-           document.getElementById('duplicateAlert').textContent=err.response.data.message;
-        }
-       }
+    <script>
 
-     $(document).ready(function () {
+
+        const addCoupon = async (name, discount, expiryDate) => {
+            try {
+                const res = await axios({
+                    method: 'POST', url: '/admin/add-coupon', data: { name, discount, expiryDate }
+                })
+                location.reload()
+            } catch (err) {
+                document.getElementById('duplicateAlert').textContent = err.response.data.message;
+            }
+        }
+
+        $(document).ready(function () {
             $("#addCouponForm").validate({
                 errorClass: 'errors',
                 rules: {
                     name: {
                         required: true,
-                        minlength:6,
+                        minlength: 6,
                     },
                     discount: {
                         required: true,
-                        max:99
+                        max: 99
                     },
-                    expiryDate:{
-                        required:true
+                    expiryDate: {
+                        required: true
                     }
                 },
                 messages: {
 
                     name: {
                         required: "Please enter coupon name",
-                        minlength:"coupon name should atleast be 6 characters"
+                        minlength: "coupon name should atleast be 6 characters"
                     },
                     discount: {
                         required: "Please enter discount",
-                        max:"the maximum is 99"
+                        max: "the maximum is 99"
                     },
-                    expiryDate:{
-                        required:"please enter the date"
+                    expiryDate: {
+                        required: "please enter the date"
                     }
                 },
                 submitHandler: function () {
-                    const name=document.getElementById('coupon').value
-                    const discount=document.getElementById('discount').value
-                    const expiryDate=document.getElementById('expiryDate').value
+                    const name = document.getElementById('coupon').value
+                    const discount = document.getElementById('discount').value
+                    const expiryDate = document.getElementById('expiryDate').value
                     addCoupon(name, discount, expiryDate);
                 }
             });
         });
-</script>
+    </script>

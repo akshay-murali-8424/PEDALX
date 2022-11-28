@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 
 
 module.exports = {
-  placeOrder: asyncHandler(async (userId, address, products, total,discount,discountedTotal,paymentMethod,coupon) => {
+  placeOrder: asyncHandler(async (userId, address, products, total,discount,discountedTotal,paymentMethod,coupon,scratchReward) => {
     let orderStatus
     if(paymentMethod=="cod"||paymentMethod=="wallet"){
       orderStatus="confirmed";
@@ -12,13 +12,14 @@ module.exports = {
       orderStatus="pending";
     }
     discount=parseInt(discount)
+    scratchReward=parseInt(scratchReward)
     discountedTotal=parseInt(discountedTotal)
     const date = new Date();
     var month = date.getUTCMonth() + 1; //months from 1-12
     var day = date.getUTCDate();
     var year = date.getUTCFullYear();
     var newdate = day + "/" + month + "/" + year;
-    const orderDetails= await getDb().collection('orders').insertOne({ user: ObjectId(userId), address, products, total, coupon,discount,discountedTotal,orderedTime: newdate, date, paymentMethod,orderStatus:orderStatus });
+    const orderDetails= await getDb().collection('orders').insertOne({ user: ObjectId(userId), address, products, total, coupon,discount,discountedTotal,orderedTime: newdate, date, paymentMethod,orderStatus:orderStatus,scratchReward });
     return orderDetails;
   }),
 
@@ -70,7 +71,21 @@ module.exports = {
   }),
 
   findOne:async(orderId)=>{
-    const order = await getDb().collection('orders').findOne({_id: ObjectId(orderId)});
+    const [order] = await getDb().collection('orders').aggregate([
+      {
+        $match: {
+         _id:ObjectId(orderId)
+        }
+      },
+      {
+        $lookup:{
+          from: "userData",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails"
+        }
+      }
+    ]).toArray();
     return order
   },
  
@@ -222,6 +237,23 @@ module.exports = {
       }
     ]).toArray();
      return dailyReport
-  })
+  }),
+
+  isPurchasedProduct:asyncHandler(async(userId,productId)=>{
+     const response=await getDb().collection('orders').aggregate([
+      {
+        $match:{
+          orderStatus:"delivered",
+          user: ObjectId(userId),
+          'products._id':ObjectId(productId)
+        }
+      }
+     ]).toArray();
+     if(response.length){
+      return true
+     }else{
+      return false
+     }
+  }),
   
 }

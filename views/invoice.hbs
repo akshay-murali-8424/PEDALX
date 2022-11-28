@@ -1,180 +1,148 @@
 
-		<style>
-			.invoice-box {
-				max-width: 800px;
-				margin: auto;
-				padding: 30px;
-				border: 1px solid #eee;
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-				font-size: 16px;
-				line-height: 24px;
-				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-				color: #555;
-			}
+    <style>
+    body {
+        font-family: sans-serif;
+        font-size: 10pt;
+    }
 
-			.invoice-box table {
-				width: 100%;
-				line-height: inherit;
-				text-align: left;
-			}
+    p {
+        margin: 0pt;
+    }
 
-			.invoice-box table td {
-				padding: 5px;
-				vertical-align: top;
-			}
+    table.items {
+        border: 0.1mm solid #e7e7e7;
+    }
 
-			.invoice-box table tr td:nth-child(2) {
-				text-align: right;
-			}
+    td {
+        vertical-align: top;
+    }
 
-			.invoice-box table tr.top table td {
-				padding-bottom: 20px;
-			}
+    .items td {
+        border-left: 0.1mm solid #e7e7e7;
+        border-right: 0.1mm solid #e7e7e7;
+    }
 
-			.invoice-box table tr.top table td.title {
-				font-size: 45px;
-				line-height: 45px;
-				color: #333;
-			}
+    table thead td {
+        text-align: center;
+        border: 0.1mm solid #e7e7e7;
+    }
 
-			.invoice-box table tr.information table td {
-				padding-bottom: 40px;
-			}
+    .items td.blanktotal {
+        background-color: #EEEEEE;
+        border: 0.1mm solid #e7e7e7;
+        background-color: #FFFFFF;
+        border: 0mm none #e7e7e7;
+        border-top: 0.1mm solid #e7e7e7;
+        border-right: 0.1mm solid #e7e7e7;
+    }
 
-			.invoice-box table tr.heading td {
-				background: #eee;
-				border-bottom: 1px solid #ddd;
-				font-weight: bold;
-			}
+    .items td.totals {
+        text-align: right;
+        border: 0.1mm solid #e7e7e7;
+    }
 
-			.invoice-box table tr.details td {
-				padding-bottom: 20px;
-			}
+    .items td.cost {
+        text-align: "."center;
+    }
+    </style>
 
-			.invoice-box table tr.item td {
-				border-bottom: 1px solid #eee;
-			}
-
-			.invoice-box table tr.item.last td {
-				border-bottom: none;
-			}
-
-			.invoice-box table tr.total td:nth-child(2) {
-				border-top: 2px solid #eee;
-				font-weight: bold;
-			}
-
-			@media only screen and (max-width: 600px) {
-				.invoice-box table tr.top table td {
-					width: 100%;
-					display: block;
-					text-align: center;
-				}
-
-				.invoice-box table tr.information table td {
-					width: 100%;
-					display: block;
-					text-align: center;
-				}
-			}
-
-			/** RTL **/
-			.invoice-box.rtl {
-				direction: rtl;
-				font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-			}
-
-			.invoice-box.rtl table {
-				text-align: right;
-			}
-
-			.invoice-box.rtl table tr td:nth-child(2) {
-				text-align: left;
-			}
-		</style>
-
-
-
-		<div class="invoice-box">
-			<table cellpadding="0" cellspacing="0">
-				<tr class="top">
-					<td colspan="2">
-						<table>
-							<tr>
-								<td class="title">
-									<img src="https://www.sparksuite.com/images/logo.png" style="width: 100%; max-width: 300px" />
-								</td>
-
-								<td>
-									{{_id}}<br />
-									{{orderStatus}}<br />
-									Due: February 1, 2015
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-
-				<tr class="information">
-					<td colspan="2">
-						<table>
-							<tr>
-								<td>
-									Sparksuite, Inc.<br />
-									12345 Sunny Road<br />
-									Sunnyville, CA 12345
-								</td>
-
-								<td>
-									Acme Corp.<br />
-									John Doe<br />
-									john@example.com
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-
-				<tr class="heading">
-					<td>Payment Method</td>
-
-					<td>Check #</td>
-				</tr>
-
-				<tr class="details">
-					<td>Check</td>
-
-					<td>1000</td>
-				</tr>
-
-				<tr class="heading">
-					<td>Item</td>
-
-					<td>Price</td>
-				</tr>
-
-				<tr class="item">
-					<td>Website design</td>
-
-					<td>$300.00</td>
-				</tr>
-
-				<tr class="item">
-					<td>Hosting (3 months)</td>
-
-					<td>$75.00</td>
-				</tr>
-
-				<tr class="item last">
-					<td>Domain name (1 year)</td>
-
-					<td>$10.00</td>
-				</tr>
-
-				<tr class="total">
-					<td></td>
-
-					<td>Total: $385.00</td>
-				</tr>
-			</table>
-		</div>
+    <table width="100%" style="font-family: sans-serif;" cellpadding="10">
+        <tr>
+            <td width="100%" style="padding: 0px; text-align: center;">
+              <a href="#" target="_blank"><img src="/img/logopedalx.png" align="center" border="0"></a>
+            </td>
+        </tr>
+        <tr>
+            <td width="100%" style="text-align: center; font-size: 20px; font-weight: bold; padding: 0px;">
+              INVOICE
+            </td>
+        </tr>
+        <tr>
+          <td height="10" style="font-size: 0px; line-height: 10px; height: 10px; padding: 0px;">&nbsp;</td>
+        </tr>
+    </table>
+    <table width="100%" style="font-family: sans-serif;" cellpadding="10">
+        <tr>
+            <td width="49%" style="border: 0.1mm solid #eee;">{{address.name}}<br>{{address.house}}<br>{{address.area}}<br>{{address.city}}<br>{{address.state}}<br>{{address.country}}<br>{{address.pincode}}</td>
+            <td width="2%">&nbsp;</td>
+            <td width="49%" style="border: 0.1mm solid #eee; text-align: right;"><strong>PEDALX</strong><br>Info Park<br>Kochi<br>Kerala<br><br><strong>Telephone:</strong> +00 000 000 0000<br><a href="#" target="_blank" style="color: #000; text-decoration: none;">pedalx.com</a></td>
+        </tr>
+    </table>
+    <br>
+    <table width="100%" style="font-family: sans-serif; font-size: 14px;" >
+        <tr>
+            <td>
+                <table width="60%" align="left" style="font-family: sans-serif; font-size: 14px;" >
+                    <tr>
+                        <td style="padding: 0px; line-height: 20px;">&nbsp;</td>
+                    </tr>
+                </table>
+                <table width="40%" align="right" style="font-family: sans-serif; font-size: 14px;" >
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Order Id</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">{{_id}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Ordered Date</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">{{orderedTime}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Customer Name</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">{{userDetails.[0].name}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table class="items" width="100%" style="font-size: 14px; border-collapse: collapse;" cellpadding="8">
+        <thead>
+            <tr>
+                <td width="15%" style="text-align: left;"><strong>S.no</strong></td>
+                <td width="45%" style="text-align: left;"><strong>Product</strong></td>
+                <td width="20%" style="text-align: left;"><strong>Price</strong></td>
+                <td width="20%" style="text-align: left;"><strong>offer price</strong></td>
+                <td width="20%" style="text-align: left;"><strong>Quantity</strong></td>
+                <td width="20%" style="text-align: left;"><strong>Amount</strong></td>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ITEMS HERE -->
+            {{#each products}}
+            <tr>
+                <td style="padding: 0px 7px; line-height: 20px;">{{inc @index}}</td>
+                <td style="padding: 0px 7px; line-height: 20px;">{{this.name}}</td>
+                <td style="padding: 0px 7px; line-height: 20px;">{{toLocaleString this.price}}</td>
+                <td style="padding: 0px 7px; line-height: 20px;">{{toLocaleString this.offerPrice}}</td>
+                <td style="padding: 0px 7px; line-height: 20px;">{{this.quantity}}</td>
+                <td style="padding: 0px 7px; line-height: 20px;">{{toLocaleString this.subTotal}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <br>
+    <table width="100%" style="font-family: sans-serif; font-size: 14px;" >
+        <tr>
+            <td>
+                <table width="60%" align="left" style="font-family: sans-serif; font-size: 14px;" >
+                    <tr>
+                        <td style="padding: 0px; line-height: 20px;">&nbsp;</td>
+                    </tr>
+                </table>
+                <table width="40%" align="right" style="font-family: sans-serif; font-size: 14px;" >
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Subtotal</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">₹{{toLocaleString total}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Discount</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">₹{{toLocaleString discount}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;"><strong>Total Amount</strong></td>
+                        <td style="border: 1px #eee solid; padding: 0px 8px; line-height: 20px;">₹{{toLocaleString discountedTotal}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>

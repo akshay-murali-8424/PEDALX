@@ -1,3 +1,21 @@
+<style>
+  .searchImage{
+        width: 101px;
+    margin-left: 32px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .sugBar{
+        width: 1200px;
+    margin: auto;
+    margin-top: 3rem;
+    background: rgb(255,110,0);
+   background: linear-gradient(90deg, rgba(255,110,0,1) 0%, rgba(255,176,0,1) 100%);
+  }
+</style>
+
+
 <!-- Start Header Area -->
 <header class="header_area sticky-header">
   <div class="main_menu">
@@ -30,7 +48,7 @@
               <ul class="dropdown-menu">
                 {{#each brands}}
                 <li class="nav-item"><a class="nav-link" href="/cycles?brandId={{this._id}}">{{this.name}}</a></li>
-                 {{/each}}
+                {{/each}}
               </ul>
             </li>
             <li class="nav-item submenu dropdown">
@@ -38,7 +56,8 @@
                 aria-expanded="false"><i class="fas fa-user"></i></a>
               <ul class="dropdown-menu">
                 {{#if userDetail}}
-                <li class="nav-item"><a class="nav-link" href="/user-profile/{{userDetail._id}}">{{userDetail.name}}</a></li>
+                <li class="nav-item"><a class="nav-link" href="/user-profile/{{userDetail._id}}">{{userDetail.name}}</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/logout">LOGOUT</a></li>
                 {{else}}
                 <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
@@ -51,7 +70,7 @@
             <li class="nav-item"><a href="/wishlist" class="cart"><span class="ti-heart"></span></a></li>
             <li class="nav-item"><a href="/cart" class="cart"><span class="ti-bag"></span></a></li>
             <li class="nav-item">
-         <button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
+              <button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
             </li>
           </ul>
         </div>
@@ -67,5 +86,73 @@
       </form>
     </div>
   </div>
+  <div class="sugBar">
+    <div class="nothing d-none">
+      <h2 style="text-align: center;"> No results found</h2>
+    </div>
+    <div id="search_div">
+
+    </div>
+  </div>
 </header>
+
+
 <!-- End Header Area -->
+
+
+
+<script>
+  function debounce(fn, delay) {
+    let timeOutId;
+    return function (...args) {
+      if (timeOutId) {
+        clearTimeout(timeOutId)
+      }
+      timeOutId = setTimeout(() => {
+        fn(...args);
+      }, delay)
+    }
+  }
+  const searchData = document.getElementById('search_input')
+  searchData.addEventListener('keyup', debounce(async () => {
+    const div=document.getElementById('search_div')
+    const e = document.getElementById('search_input').value
+    if (!e) {
+      div.innerHTML = '';
+      document.getElementById('startfirst').classList.remove('d-none');
+    } else {
+
+      const result = await axios({
+        method: 'POST',
+        url: '/search',
+        data: { e }
+      });
+      const res = result.data.search
+      console.log(res)
+      div.innerHTML = '';
+      if (res.length < 1) {
+        document.getElementById('nothing').classList.remove('d-none');
+        return;
+      } else {
+        res.forEach((item) => {
+
+          div.innerHTML += `<div class="row align-items-center position-relative">
+          <div>
+            <a href="/view-product/${item._id}">
+            <img class="img-fluid searchImage" src=${item.images[0]} alt="..." style=>
+            </a>
+          </div>
+          <div class="col position-static">
+              <p class="mb-0 fw-bold">
+              <a class="stretched-link text-body" href="/view-product/${item._id}">${item.name}</a> <br>
+              <span class="text" style="color:red;">₹${item.offerPrice}</span>
+               </p>
+                </div>
+            </div>`
+
+        });
+        return;
+      }
+    }
+  }, 500))
+</script>

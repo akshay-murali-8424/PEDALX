@@ -35,7 +35,7 @@ module.exports = {
       .aggregate([
         {
           $match: {
-            user: new ObjectId(userId),
+            user: ObjectId(userId),
           },
         },
         {

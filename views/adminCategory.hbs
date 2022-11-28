@@ -45,40 +45,71 @@
                                     <td>
                                         <button data-bs-toggle="modal" data-bs-target="#hi{{inc @index}}"> <i
                                                 class="fas fa-edit"></i></button>
-                                        <button> <i class="fas fa-trash"></i></button>
+                                        <button data-bs-toggle="modal" data-bs-target="#delete{{inc @index}}"> <i class="fas fa-trash"></i></button>
                                     </td>
                                 </tr>
 
 
-                                {{!-- modal --}}
+                                {{!--edit modal --}}
                                 <div class="modal fade" id="hi{{inc @index}}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Edit Category</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel" style="color: black;">
+                                                    Edit Category</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
-                                                <form id="categoryEdit" action="/admin/edit-category/{{this._id}}" method="post">
-                                            <div class="modal-body">
+                                            <form id="categoryEdit" action="/admin/edit-category/{{this._id}}"
+                                                method="post">
+                                                <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label for="recipient-name"
-                                                            class="col-form-label">Category Name</label>
-                                                        <input type="text" class="form-control" id="recipient-name" value="{{this.name}}" name="name">
+                                                        <label for="recipient-name" class="col-form-label">Category
+                                                            Name</label>
+                                                        <input type="text" class="form-control" id="recipient-name"
+                                                            value="{{this.name}}" name="name">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="message-text"
                                                             class="col-form-label">Description</label>
-                                                        <textarea class="form-control" id="message-text" name="description">{{this.description}}</textarea>
+                                                        <textarea class="form-control" id="message-text"
+                                                            name="description">{{this.description}}</textarea>
                                                     </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {{!-- delete modal --}}
+                                <div class="modal fade" id="delete{{inc @index}}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-dark" id="exampleModalLabel">Delete Category</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{#if this.productCount}}
+                                                <h5 class="text-dark">There are {{this.productCount}} products in this category.Are you sure?</h5>
+                                                {{else}}
+                                                <h5 class="text-dark">Are you sure?</h5>
+                                                {{/if}}
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Update</button>
+                                                <a href="/admin/delete-category?id={{this._id}}"> <button type="button" class="btn btn-danger">delete</button></a>
                                             </div>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>

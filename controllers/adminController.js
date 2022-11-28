@@ -14,6 +14,7 @@ module.exports = {
   // @desc render admin login page
   // @route /login GET
   renderLoginPage: async (req, res) => {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     if (req.cookies.adminjwt) {
       const isLoggedIn = await promisify(jwt.verify)(
         req.cookies.adminjwt,
@@ -117,9 +118,18 @@ module.exports = {
     }
   },
 
+  deleteProduct: async(req,res)=>{
+    const productId=req.query.id
+    await productService.deleteProduct(productId);
+    res.redirect('back')
+  },
+
   renderCategoryPage: async (req, res) => {
     const categoryClass = "active";
-    const categories = await categoryService.findAll();
+    const categories = await categoryService.findAllForAdmin()
+    categories.forEach((categories)=>{
+      categories.productCount=categories.products.length;
+    })
     res.render("adminCategory", { admin: true, categories, categoryClass });
   },
 
@@ -141,9 +151,19 @@ module.exports = {
     res.redirect('/admin/category')
   },
 
+  deleteCategory:async(req,res)=>{
+    const categoryId=req.query.id;
+    await categoryService.deleteCategory(categoryId)
+    await productService.deleteProductsInCategory(categoryId)
+    res.redirect('back')
+  },
+
   renderBrandPage: async (req, res) => {
     const brandClass = "active";
-    const brands = await brandService.findAll();
+    const brands = await brandService.findAllForAdmin()
+    brands.forEach((brands)=>{
+      brands.productCount=brands.products.length;
+    })
     res.render("adminBrand", { admin: true, brands, brandClass });
   },
 
@@ -165,11 +185,18 @@ module.exports = {
     res.redirect('/admin/brand')
   },
 
+  
+  deleteBrand:async(req,res)=>{
+    const brandId=req.query.id;
+    await brandService.deleteBrand(brandId)
+    await productService.deleteProductsInBrand(brandId)
+    res.redirect('back')
+  },
+
   renderUserManagement: async (req, res) => {
     try {
       const usersClass = "active";
       const users = await userService.findAll();
-      console.log(users)
       res.render("adminUserManagement", { admin: true, users, usersClass })
     } catch (err) {
       console.log(err);
@@ -306,6 +333,27 @@ module.exports = {
       status: "success"
     })
   }),
+
+  editCoupon:async(req,res)=>{
+    try{
+      const couponId=req.params.id
+      const {name,discount,expiryDate}=req.body
+      const isCouponExist = await couponService.findOne(name)
+      if(name&&discount&&expiryDate&&!isCouponExist){
+        await couponService.updateCoupon(couponId,name,discount,expiryDate)
+        res.redirect('back')
+      }
+      res.redirect('back')
+    }catch(err){
+      console.log(err);
+    }
+  },
+
+  deleteCoupon:async(req,res)=>{
+    const couponId=req.query.id;
+    await couponService.deleteCoupon(couponId);
+    res.redirect('back')
+  },
 
   renderSalesPage:async(req,res)=>{
     let dateMatchQuery={}

@@ -27,6 +27,11 @@ module.exports = {
     getWishlist: asyncHandler(async (userId) => {
         const wishlist = await getDb().collection('wishlist').aggregate([
             {
+              $match:{
+                user: ObjectId(userId)
+              }
+            },
+            {
                 $lookup: {
                     from: 'products',
                     localField: 'products.productId',

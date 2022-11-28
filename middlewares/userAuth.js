@@ -53,6 +53,7 @@ module.exports = {
         if(isLoggedIn){
           const userData=await userHelper.findUserForToken(isLoggedIn.userId);
           res.locals.userDetail=userData;
+          req.user=userData;
           return next();
         }else{
           return next();

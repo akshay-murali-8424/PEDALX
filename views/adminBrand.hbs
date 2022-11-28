@@ -45,10 +45,10 @@
                                     <td>
                                         <button data-bs-toggle="modal" data-bs-target="#hii{{inc @index}}"> <i
                                                 class="fas fa-edit"></i></button>
-                                        <button> <i class="fas fa-trash"></i></button>
+                                        <button data-bs-toggle="modal" data-bs-target="#deleteBrand{{inc @index}}"> <i class="fas fa-trash"></i></button>
                                     </td>
                                 </tr>
-                                {{!-- modal --}}
+                                {{!--edit modal --}}
                                 <div class="modal fade" id="hii{{inc @index}}" tabindex="-1"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
@@ -81,6 +81,32 @@
                                                     <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
                                             </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 {{!-- delete modal --}}
+                                <div class="modal fade" id="deleteBrand{{inc @index}}" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-dark" id="exampleModalLabel">Delete brand</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{#if this.productCount}}
+                                                <h5 class="text-dark">There are {{this.productCount}} products in this brand.Are you sure?</h5>
+                                                {{else}}
+                                                <h5 class="text-dark">Are you sure?</h5>
+                                                {{/if}}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <a href="/admin/delete-brand?id={{this._id}}"> <button type="button" class="btn btn-danger">delete</button></a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

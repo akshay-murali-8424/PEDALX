@@ -47,6 +47,7 @@ router.route('/edit-product/:id')
 .get(adminAuth.adminAuthentication,adminController.renderEditProduct)
 .post(adminAuth.adminAuthentication,upload.array('image',4),adminController.editProduct)
 
+router.get('/delete-product',adminAuth.adminAuthentication,adminController.deleteProduct)
 
 //@desc admin category management
 router.get('/category',adminAuth.adminAuthentication,adminController.renderCategoryPage)
@@ -59,6 +60,8 @@ router.route('/addCategory')
 
 router.post('/edit-category/:id',adminAuth.adminAuthentication,adminController.editCategory)
 
+router.get('/delete-category',adminAuth.adminAuthentication,adminController.deleteCategory)
+
 //@desc admin brand management
 router.get('/brand',adminAuth.adminAuthentication,adminController.renderBrandPage)
 
@@ -69,6 +72,8 @@ router.route('/addBrand')
 .post(adminAuth.adminAuthentication,adminController.addBrand)
 
 router.post('/edit-brand/:id',adminAuth.adminAuthentication,adminController.editBrand)
+
+router.get('/delete-brand',adminAuth.adminAuthentication,adminController.deleteBrand)
 
 router.get('/user-management',adminAuth.adminAuthentication,adminController.renderUserManagement)
 
@@ -91,6 +96,10 @@ router.patch('/edit-category-offer',adminAuth.adminAuthentication,adminControlle
 router.get('/coupons',adminAuth.adminAuthentication,adminController.renderCouponsPage)
 
 router.post('/add-coupon',adminAuth.adminAuthentication,adminController.addCoupon)
+
+router.post('/edit-coupon/:id',adminAuth.adminAuthentication,adminController.editCoupon)
+
+router.get('/delete-coupon',adminAuth.adminAuthentication,adminController.deleteCoupon)
 
 router.get('/sales-report',adminAuth.adminAuthentication,adminController.renderSalesPage)
 

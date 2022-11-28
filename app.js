@@ -48,12 +48,17 @@ Handlebar.registerHelper( "when",function(operand_1, operator, operand_2, option
 
 Handlebar.registerHelper('toLocaleString', function(number) {
   try{
-
     return number?.toLocaleString()
   }catch(err){
     
   }
 })
+
+Handlebar.registerHelper("dateFormatChange",(date)=>{
+  let [day,month,year]=date.split('/');
+  return `${year}-${month}-${day}`
+})
+
 
 
 app.use(logger('dev'));
@@ -62,8 +67,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
+
+
 
 // mongo connection
 initDb((err, db) => {
