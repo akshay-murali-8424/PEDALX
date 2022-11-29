@@ -40,9 +40,11 @@
                     <thead>
                         <tr>
                             <th scope="col">Product</th>
+                            <th scope="col"></th>
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Total</th>
+                    
                         </tr>
                     </thead>
                     <tbody>
@@ -62,6 +64,7 @@
                                         </div>
                                     </div>
                             </td>
+                            <td><a href="/remove-from-cart/{{this.productDetails._id}}"> <button class="btn btn-danger">Remove</button></a> </td>
                             <td>
                                 <h5>{{toLocaleString this.productDetails.offerPrice}}</h5>
                             </td>
@@ -104,6 +107,9 @@
                             </td>
                         </tr> --}}
                         <tr>
+                            <td>
+
+                            </td>
                             <td>
 
                             </td>

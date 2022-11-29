@@ -138,8 +138,8 @@
 			<div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab">
 				<div class="row justify-content-center">
 					{{#if reviews}}
-					<div class="col-lg-6">
-						<div class="row total_rate">
+					<div class="col-lg-6 ">
+						<div class="row total_rate mb-3" >
 							<div class="col-6">
 								<div class="box_total">
 									<h5>Overall</h5>
@@ -150,34 +150,19 @@
 							<div class="col-6">
 								<div class="rating_list">
 									<h3>Based on {{reviews.[0].totalReview}} Reviews</h3>
-									<ul class="list">
-										<li><a href="#">5 Star <i class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i> 01</a></li>
-										<li><a href="#">4 Star <i class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i> 01</a></li>
-										<li><a href="#">3 Star <i class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i> 01</a></li>
-										<li><a href="#">2 Star <i class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i> 01</a></li>
-										<li><a href="#">1 Star <i class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i><i class="fa fa-star"></i><i
-													class="fa fa-star"></i> 01</a></li>
-									</ul>
+									
 								</div>
 							</div>
 						</div>
 						<div class="review_list">
                            {{#each reviews}}
-							<div class="review_item">
+							<div class="review_item" style="background-color: #e8f0f2;">
 								<div class="media">
-									<div class="media-body">
+									<div class="media-body" style="padding: 11px;">
 										<h4>{{this.userData.[0].name}}</h4>
+										<h5>{{this.reviews.postedOn}}</h5>
                                          <div id="mRating{{@index}}" data-rating="{{this.reviews.rating}}">
-										
+										<p>{{this.reviews.review}}</p>
 										</div>
 										
 										<script>
@@ -191,7 +176,7 @@
 										</script>
 									</div>
 								</div>
-								<p>{{this.reviews.review}}</p>
+								
 							</div>
 							{{/each}}
 						</div>

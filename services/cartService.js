@@ -98,5 +98,9 @@ module.exports = {
   findOne:asyncHandler(async(userId)=>{
     const cart= await getDb().collection('cart').findOne({user: ObjectId(userId)})
     return cart;
+  }),
+
+  removeFromCart:asyncHandler(async(userId,productId)=>{
+    await getDb().collection('cart').updateOne({},{$pull:{products:{productId:ObjectId(productId)}}})
   })
 };

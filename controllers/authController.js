@@ -19,8 +19,8 @@ module.exports = {
   // @route /admin/login POST
   verifyAdminLogin: asyncHandler(async (req, res, next) => {
     const admin = await getDb().collection("adminData").findOne();
-    const { email, password } = req.body;
-
+    let { email, password } = req.body;
+    email = email.toLowerCase();
     if (email !== admin.email) {
       throw new AppError("invalid credentials", 401);
     }
@@ -44,6 +44,7 @@ module.exports = {
   // @route /register POST
   userRegister: asyncHandler(async (req, res) => {
     let { name, email, password, phoneno } = req.body;
+    email = email.toLowerCase();
     const isExistingEmail = await userService.findExistingEmail(email);
     const isExistingPhoneno = await userService.findExistingPhoneno(phoneno);
     if (isExistingEmail) {
@@ -83,7 +84,8 @@ module.exports = {
   // @desc verify user login
   // @route login POST
   verifyUserLogin: asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email.toLowerCase()
     const user = await userService.findExistingEmail(email);
     if (user.isBlocked) {
       throw new AppError("this user is blocked by the company", 401)
@@ -135,6 +137,7 @@ module.exports = {
         });
       }
     } catch (err) {
+      console.log(err)
       res.status(400).json({
         status: "error",
         message: "too many requests",
@@ -150,7 +153,6 @@ module.exports = {
           to: `+91${req.body.phoneno}`,
           code: req.body.otp,
         });
-      console.log(data.status)
       if (data.status == "approved") {
         const user = await userService.findExistingPhoneno(req.body.phoneno);
         const userId = mongodb.ObjectId(user._id);
@@ -198,51 +200,70 @@ module.exports = {
     res.redirect('/admin');
   },
 
-  signUpWithGoogle:async (req, res) => {
-    try{
+  signUpWithGoogle: async (req, res) => {
+    try {
       const { userJwt } = req.body;
       const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
       const ticket = await client.verifyIdToken({
         idToken: userJwt,
-        audience: process.env.GOOGLE_CLIENT_ID,  
+        audience: process.env.GOOGLE_CLIENT_ID,
       });
       const payload = ticket.getPayload();
-      const {email,given_name:name,picture}=payload
-      const isUserExist=await userService.findExistingEmail(email)
-      if(isUserExist){
+      const { email, given_name: name, picture } = payload
+      const isUserExist = await userService.findExistingEmail(email)
+      if (isUserExist) {
         const userId = mongodb.ObjectId(isUserExist._id);
-          const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-            expiresIn: "2d",
-          });
-          res.cookie("userjwt", token, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000,
-          });
-          res.json({
-            status: "success",
-            message: "success",
-          });
-      }else{
-      const user=await userService.addUserGoogle(name,email,picture)
-      const token = jwt.sign({ userId: user.insertedId }, process.env.JWT_SECRET, {
-        expiresIn: "2d",
-      });
-      res.cookie("userjwt", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-      await walletService.createWallet(user.insertedId)
-      res.json({
-        status: "success",
-        message: "success",
-      });
-    }
-    }catch(err){
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+          expiresIn: "2d",
+        });
+        res.cookie("userjwt", token, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: false,
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+        res.json({
+          status: "success",
+          message: "success",
+        });
+      } else {
+        const user = await userService.addUserGoogle(name, email, picture)
+        const token = jwt.sign({ userId: user.insertedId }, process.env.JWT_SECRET, {
+          expiresIn: "2d",
+        });
+        res.cookie("userjwt", token, {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: false,
+          maxAge: 24 * 60 * 60 * 1000,
+        });
+        await walletService.createWallet(user.insertedId)
+        res.json({
+          status: "success",
+          message: "success",
+        });
+      }
+    } catch (err) {
       console.log(err)
+    }
+  },
+
+
+
+  setNewPassword: async (req, res) => {
+    try {
+      console.log(req.body)
+      let { password } = req.body
+      // generate salt to hash password
+      const salt = await bcrypt.genSalt(10);
+      // hashing password
+      password = await bcrypt.hash(password, salt);
+      await userService.changePassword(req.user._id,password)
+      res.json({
+        status:"success"
+      })
+    } catch (err) {
+      console.log(err);
     }
   }
 };

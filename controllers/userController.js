@@ -60,6 +60,10 @@ module.exports = ({
       if (req.query.brandId) {
         dbQuery.brand=ObjectId(req.query.brandId) 
       }
+      if(req.query?.price){
+        let price=parseInt(req.query.price)
+        dbQuery.offerPrice={$lte:price}
+      }
       if (req.query?.sort) {
         const sort = parseInt(req.query.sort)
         if (sort === 1) {
@@ -81,8 +85,6 @@ module.exports = ({
       }
       pageNo = pageNo + 1;
       pageNo = parseInt(pageNo);
-      console.log(pageNo);
-      console.log(page);
       res.render("allCycles", { user: true, products, isSort, page, pageNo })
     } catch (err) {
       console.log(err)
@@ -103,7 +105,6 @@ module.exports = ({
         reviewService.isUserAlreadyReviewed(req.user._id,productId)
       ])
     }
-    console.log(isPurchasedProduct,isUserAlreadyReviewed)
     if(isPurchasedProduct&&!isUserAlreadyReviewed){
       isEligibleToReview=true;
     }
@@ -136,7 +137,6 @@ module.exports = ({
   changeProductQuantity: asyncHandler(async (req, res) => {
     const { cartId, productId, count } = req.body;
     const result = await cartService.changeProductQuantity(cartId, productId, count);
-    console.log(result)
     if (result.modifiedCount === 1) {
       res.json({
         status: "removed",
@@ -169,7 +169,6 @@ module.exports = ({
   },
 
   addAddress: async (req, res) => {
-    console.log(req.user._id, req.body)
     try {
       await userService.addAddress(req.user._id, req.body)
       res.json({
@@ -184,7 +183,6 @@ module.exports = ({
   placeOrder: asyncHandler(async (req, res) => {
 
     const { addressId, paymentMethod, coupon } = req.body;
-    console.log(req.body)
     const address = await userService.getAddressForCheckout(req.user._id, addressId)
     let cart = await cartService.getCart(req.user._id);
     cart.forEach(cart => {
@@ -292,16 +290,18 @@ module.exports = ({
   }),
 
   renderWishlist: async (req, res) => {
+    let isEmpty=0
     const [wishlist] = await wishlistService.getWishlist(req.user._id);
-    console.log(wishlist);
-    res.render('wishlist', { user: true, wishlist, isEmpty: wishlist.products.length })
+    if(wishlist){
+      isEmpty=wishlist.products.length
+    }
+    res.render('wishlist', { user: true, wishlist, isEmpty})
   },
 
   addToWishlist: asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const productId = req.params.id;
     const result = await wishlistService.addToWishlist(userId, productId);
-    console.log(result);
     if (!result) {
       res.json({
         status: "failure",
@@ -569,7 +569,6 @@ module.exports = ({
     try {
       const orderId = req.params.id;
       const order = await orderService.findOne(orderId);
-      console.log(order);
       const compile = async function (templateName, data) {
         const filePath = path.join(
           process.cwd(),
@@ -634,4 +633,17 @@ module.exports = ({
     })
   }),
 
+  renderForgotPassword:(req,res)=>{
+    res.render('forgotPassword',{user:true})
+  },
+
+  renderSetNewPassword:(req,res)=>{
+    res.render('setNewPassword',{user:true})
+  },
+  
+  removeFromCart:async(req,res)=>{
+    const productId=req.params.id
+    await cartService.removeFromCart(req.user._id,productId)
+    res.redirect('back')
+  }
 })

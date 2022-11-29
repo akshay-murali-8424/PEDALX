@@ -46,6 +46,8 @@ router.get('/cart',userAuth.userPermission,userController.renderCartPage)
 //@desc to change product quantity in cart
 router.post('/change-product-quantity',userAuth.addToCartPermission,userController.changeProductQuantity)
 
+router.get('/remove-from-cart/:id',userAuth.userPermission,userController.removeFromCart)
+
 router.route('/checkout')
 .get(userAuth.userPermission,userController.renderCheckoutPage)
 .post(userAuth.userPermission,userController.placeOrder)
@@ -98,5 +100,11 @@ router.get('/get-invoice/:id',userAuth.userPermission,userController.getInvoice)
 router.post('/post-review',userAuth.userPermission,userController.postReview)
 
 router.post('/search',userController.search)
+
+router.get('/forgot-password',userController.renderForgotPassword)
+
+router.route('/set-new-password')
+.get(userAuth.userPermission,userController.renderSetNewPassword)
+.post(userAuth.userPermission,authController.setNewPassword)
 
 module.exports = router;

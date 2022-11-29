@@ -95,14 +95,12 @@ module.exports = {
       categoryService.findAll(),
       brandService.findAll()
     ])
-    console.log(products);
     res.render('editProduct', { admin: true, products, categories, brands })
   },
 
   editProduct: async (req, res) => {
     try {
       const productId = req.params.id;
-      console.log(req.body)
       const { name, description, price, category, brand, stock } = req.body;
       const images = await Promise.all(
         req.files.map(async (file) => {
@@ -299,7 +297,6 @@ module.exports = {
   }),
 
   editcategoryOffer: asyncHandler(async (req, res) => {
-    console.log(req.body)
     let { categoryId, discount } = req.body;
     discount = parseInt(discount)
     if (!discount || discount > 99) {
