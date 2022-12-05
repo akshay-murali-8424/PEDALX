@@ -101,6 +101,7 @@ module.exports = {
   }),
 
   removeFromCart:asyncHandler(async(userId,productId)=>{
-    await getDb().collection('cart').updateOne({},{$pull:{products:{productId:ObjectId(productId)}}})
+    const response=await getDb().collection('cart').updateOne({},{$pull:{products:{productId:ObjectId(productId)}}})
+    console.log(response)
   })
 };
